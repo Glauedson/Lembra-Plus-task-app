@@ -12,7 +12,7 @@ import java.time.LocalTime
     foreignKeys = [
         ForeignKey(
             entity = Category::class,
-            parentColumns = ["uid"],
+            parentColumns = ["id"],
             childColumns = ["category_id"],
             onDelete = ForeignKey.SET_NULL
         )
