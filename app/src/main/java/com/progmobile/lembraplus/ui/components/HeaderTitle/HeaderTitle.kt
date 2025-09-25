@@ -42,7 +42,6 @@ fun HeaderTitle(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 25.dp)
             .background(color = MaterialTheme.colorScheme.background)
     ) {
         // Back
