@@ -16,7 +16,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+<<<<<<< HEAD
 import com.progmobile.lembraplus.ui.screens.AboutScreen
+=======
+import com.progmobile.lembraplus.ui.screens.CreateNewTaskScreen
+>>>>>>> 7592ebc5242445c7036373320d5293a9b2ab0aa9
 import com.progmobile.lembraplus.ui.theme.LembraPlusTheme
 import com.progmobile.lembraplus.ui.screens.HomeScreen
 
@@ -47,11 +51,19 @@ fun App() {
     Scaffold { pad ->
         NavHost(
             navController = navController,
+<<<<<<< HEAD
             startDestination = "home",
             modifier = Modifier.padding(pad).background(color = MaterialTheme.colorScheme.background)
         ) {
             composable("home") {
                 AboutScreen()
+=======
+            startDestination = "CreateNewTaskScreen",
+            modifier = Modifier.padding(pad)
+        ) {
+            composable("CreateNewTaskScreen") {
+                CreateNewTaskScreen()
+>>>>>>> 7592ebc5242445c7036373320d5293a9b2ab0aa9
             }
         }
 
