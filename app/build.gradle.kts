@@ -52,6 +52,8 @@ dependencies {
 
     testImplementation("androidx.room:room-testing:2.5.2")
 
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+
     testImplementation("org.robolectric:robolectric:4.10.3")
 
     testImplementation("androidx.test:core:1.5.0")
