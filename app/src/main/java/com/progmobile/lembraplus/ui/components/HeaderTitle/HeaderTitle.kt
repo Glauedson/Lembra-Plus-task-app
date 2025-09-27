@@ -20,40 +20,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-
-data class HeaderTitleProps(
-    val title: String,
-    val onBackClick: () -> Unit = {},
-    val maxTitleLength: Int = 20
-) {
-
-    val validatedTitle: String = if (title.length > maxTitleLength) {
-        "${title.take(maxTitleLength - 3)}..."
-    } else {
-        title
-    }
-}
 
 @Composable
-fun HeaderTitle(
-    props: HeaderTitleProps
-) {
+fun HeaderTitle(props: HeaderTitleProps) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.background)
     ) {
-        // Back
+        // Back Button
         IconButton(
-            onClick = props.onBackClick,
+            onClick = props.onClick,
             modifier = Modifier
-                .background(color = MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(10.dp))
+                .background(
+                    color = MaterialTheme.colorScheme.tertiary,
+                    shape = RoundedCornerShape(10.dp)
+                )
                 .width(45.dp)
                 .height(45.dp)
                 .align(Alignment.CenterStart),
         ) {
-
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = "Back",
@@ -77,46 +63,12 @@ fun HeaderTitle(
 }
 
 @Composable
-fun HeaderTitle(
-    title: String,
-    navController: NavController,
-    maxTitleLength: Int = 20
-) {
-    val props = HeaderTitleProps(
-        title = title,
-        onBackClick = {
-            navController.navigate("home") {
-                popUpTo("home") { inclusive = false }
-            }
-        },
-        maxTitleLength = maxTitleLength
-    )
-
-    HeaderTitle(props = props)
-}
-
-@Composable
-fun HeaderTitle(
-    title: String,
-    onBackClick: () -> Unit,
-    maxTitleLength: Int = 20
-) {
-    val props = HeaderTitleProps(
-        title = title,
-        onBackClick = onBackClick,
-        maxTitleLength = maxTitleLength
-    )
-
-    HeaderTitle(props = props)
-}
-
-@Composable
 @Preview(showBackground = true)
 fun PreviewHeaderTitle() {
     HeaderTitle(
         props = HeaderTitleProps(
             title = "About",
-            onBackClick = {}
+            onClick = {}
         )
     )
 }

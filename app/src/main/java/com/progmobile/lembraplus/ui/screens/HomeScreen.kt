@@ -6,14 +6,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
 import com.progmobile.lembraplus.ui.components.HeaderTitle.HeaderTitle
+import com.progmobile.lembraplus.ui.components.HeaderTitle.HeaderTitleProps
+import com.progmobile.lembraplus.utils.Routes
 
 @Composable
-fun HomeScreen () {
+fun HomeScreen(navController: NavHostController) {
     Scaffold { pad ->
         Column (
             modifier = Modifier
@@ -21,9 +23,14 @@ fun HomeScreen () {
                 .background(MaterialTheme.colorScheme.background)
                 .fillMaxSize(),
         ) {
+
             HeaderTitle(
-                title = "Create New Note",
-                onBackClick = { /* TO DO */ }
+                props = HeaderTitleProps(
+                    title = "Home",
+                    onClick = {
+                        navController.navigate(Routes.About.route)
+                    }
+                )
             )
 
 
@@ -31,8 +38,3 @@ fun HomeScreen () {
     }
 }
 
-@Composable
-@Preview(showBackground = true)
-fun previewHomeScreen(){
-    HomeScreen()
-}
