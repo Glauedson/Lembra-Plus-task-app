@@ -1,10 +1,11 @@
 package com.progmobile.lembraplus.ui.components.NavBar
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -17,6 +18,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -31,11 +34,22 @@ fun NavBar(
         navController = props.navController
     )
 
+    val lineOffset by animateDpAsState(
+        targetValue = when (props.currentScreen.lowercase()) {
+            "home" -> 45.dp
+            "about" -> 279.dp
+            else -> 45.dp
+        },
+        animationSpec = tween(durationMillis = 300),
+        label = "line_animation"
+    )
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
     ) {
+
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
@@ -48,11 +62,23 @@ fun NavBar(
                     ambientColor = Color.Black,
                 )
                 .background(color = MaterialTheme.colorScheme.background)
-                .padding(start = 45.dp, end = 45.dp)
         ) {
-            Spacer(modifier = Modifier.width(60.dp))
-            Spacer(modifier = Modifier.width(60.dp))
-            Spacer(modifier = Modifier.width(60.dp))
+            Box(
+                modifier = Modifier
+                    .offset(x = lineOffset)
+                    .background(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(1.dp)
+                    )
+                    .width(60.dp)
+                    .height(3.dp)
+                    .shadow(
+                        elevation = 2.dp,
+                        spotColor = MaterialTheme.colorScheme.primary,
+                        ambientColor = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(1.dp)
+                    )
+            )
         }
 
         Row(

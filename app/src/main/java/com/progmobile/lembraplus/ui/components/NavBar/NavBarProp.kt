@@ -58,11 +58,11 @@ private fun getIconState(
     unselectedColor: Color
 ): NavBarIconState {
     val isSelected = currentScreen.lowercase() == screen.lowercase()
-    val isNewTaskScreen = currentScreen.lowercase() == "newtask"
+    val isCreateNoteScreen = currentScreen.lowercase() == "createnote"
 
     return NavBarIconState(
-        icon = if (isSelected && !isNewTaskScreen) defaultIcon else outlinedIcon,
-        tint = if (isSelected && !isNewTaskScreen) selectedColor else unselectedColor,
-        isSelected = isSelected
+        icon = if (isSelected && !isCreateNoteScreen) defaultIcon else outlinedIcon,
+        tint = if (isSelected && !isCreateNoteScreen) selectedColor else unselectedColor,
+        isSelected = isSelected && !isCreateNoteScreen
     )
 }
