@@ -17,7 +17,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.progmobile.lembraplus.ui.screens.AboutScreen
-import com.progmobile.lembraplus.ui.screens.CreateNewTaskScreen
 import com.progmobile.lembraplus.ui.theme.LembraPlusTheme
 import com.progmobile.lembraplus.ui.screens.HomeScreen
 import com.progmobile.lembraplus.utils.Routes
@@ -58,9 +57,9 @@ fun App() {
             composable(Routes.About.route) {
                 AboutScreen(navController)
             }
-            composable(Routes.CreateNote.route) {
-                CreateNewTaskScreen(navController)
-            }
+//            composable(Routes.CreateNote.route) {
+//                CreateNewTaskScreen(navController)
+//            }
         }
 
     }

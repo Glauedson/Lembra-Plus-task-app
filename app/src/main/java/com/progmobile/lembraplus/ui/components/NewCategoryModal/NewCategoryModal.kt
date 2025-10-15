@@ -47,7 +47,7 @@ fun NewCategoryModal(
     onCreated: (Category) -> Unit = {}
 ) {
 
-    var showDialog by rememberSaveable { mutableStateOf(true) }
+    var showDialog by rememberSaveable { mutableStateOf(false) }
 
     Button(
         onClick = { showDialog = true }, colors = ButtonDefaults.outlinedButtonColors(
