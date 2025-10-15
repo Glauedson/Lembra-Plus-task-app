@@ -144,8 +144,8 @@ fun CreateNewTaskScreen(
                             isFixed = isFixed,
                             createdAt = System.currentTimeMillis()
                         )
-
                         viewModel.addTask(task)
+                        navController.navigate("home")
                     },
                     shape = RoundedCornerShape(18.dp),
                     modifier = Modifier
@@ -178,7 +178,7 @@ fun CreateNewTaskScreen(
         ) {
             HeaderTitle(
                 props = HeaderTitleProps(
-                    title = "Create New Note", onClick = {})
+                    title = "Create New Note", onClick = {navController.navigate("home")})
             )
             Column(
                 modifier = Modifier
