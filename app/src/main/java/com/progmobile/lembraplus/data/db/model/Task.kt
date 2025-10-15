@@ -25,5 +25,6 @@ data class Task(
     @ColumnInfo("category_id") val categoryId: Int? = null,
     @ColumnInfo("task_date") val date: LocalDate? = null,
     @ColumnInfo("task_time") val time: LocalTime? = null,
+    @ColumnInfo("is_fixed") val isFixed: Boolean = false,
     @ColumnInfo("created_at") val createdAt: Long = System.currentTimeMillis()
 )
