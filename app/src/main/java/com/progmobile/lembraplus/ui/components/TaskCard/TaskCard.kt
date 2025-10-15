@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -29,10 +30,13 @@ import androidx.compose.ui.unit.sp
 fun TaskCard(props: TaskCardProps) {
     Box(
         modifier = Modifier
-            .fillMaxWidth()
+            .then(
+                if (props.width != 0) Modifier.width(props.width.dp).height(120.dp)
+                else Modifier.fillMaxWidth()
+            )
             .shadow(
                 elevation = 3.dp,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(12.dp)
             )
             .background(
                 color = Color.White,
