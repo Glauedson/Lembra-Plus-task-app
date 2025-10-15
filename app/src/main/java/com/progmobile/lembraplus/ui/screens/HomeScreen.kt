@@ -2,6 +2,7 @@ package com.progmobile.lembraplus.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import com.progmobile.lembraplus.ui.components.NavBar.NavBar
 import com.progmobile.lembraplus.ui.components.NavBar.NavProps
 import com.progmobile.lembraplus.ui.components.TaskCard
 import com.progmobile.lembraplus.ui.components.TaskCardProps
+import com.progmobile.lembraplus.utils.Routes
 
 @Composable
 fun HomeScreen(navController: NavHostController) {
@@ -68,12 +70,28 @@ fun HomeScreen(navController: NavHostController) {
             }
 
             // Favorited
-            Text(
-                "Favorited",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Medium
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    "Favorited",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Medium
+
+                )
+
+                Text(
+                    "See All",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.clickable {
+                        navController.navigate(Routes.SeeAll.createRoute("favorites"))
+                    }
+                )
+            }
 
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -116,13 +134,29 @@ fun HomeScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Categorys
-            Text(
-                "Categorys",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Medium
-            )
+            // Categories
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    "Categories",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Medium
+
+                )
+
+                Text(
+                    "See All",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.clickable {
+                        navController.navigate(Routes.SeeAll.createRoute("categories"))
+                    }
+                )
+            }
 
             Spacer(modifier = Modifier.height(10.dp))
             CategoryCard(props = CategoryCardProps(
@@ -142,15 +176,31 @@ fun HomeScreen(navController: NavHostController) {
                 colorHex = "#FF9800"
             ))
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
 
             // lateste tasks added
-            Text(
-                "latest tasks added",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Medium
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    "Latest tasks added",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Medium
+
+                )
+
+                Text(
+                    "See All",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.clickable {
+                        navController.navigate(Routes.SeeAll.createRoute("notes"))
+                    }
+                )
+            }
 
             Spacer(modifier = Modifier.height(10.dp))
 

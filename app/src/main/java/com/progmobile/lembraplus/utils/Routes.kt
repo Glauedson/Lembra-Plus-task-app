@@ -4,4 +4,7 @@ sealed class Routes(val route: String) {
     object Home : Routes("Home")
     object About : Routes("about")
     object CreateNote : Routes("createNote")
+    object SeeAll : Routes("seeAll/{type}") {
+        fun createRoute(type: String) = "seeAll/$type"
+    }
 }

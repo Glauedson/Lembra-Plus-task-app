@@ -24,6 +24,7 @@ import com.progmobile.lembraplus.ui.screens.AboutScreen
 import com.progmobile.lembraplus.ui.screens.CreateNewTaskScreen
 import com.progmobile.lembraplus.ui.theme.LembraPlusTheme
 import com.progmobile.lembraplus.ui.screens.HomeScreen
+import com.progmobile.lembraplus.ui.screens.SeeAllScreen
 import com.progmobile.lembraplus.ui.vms.TaskViewModel
 import com.progmobile.lembraplus.ui.vms.TaskViewModelFactory
 import com.progmobile.lembraplus.utils.Routes
@@ -42,7 +43,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun App() {
-
     val systemUiController = rememberSystemUiController()
     val navController = rememberNavController()
 
@@ -76,8 +76,13 @@ fun App() {
                     navController
                 )
             }
+            composable(Routes.SeeAll.route) { backStackEntry ->
+                val type = backStackEntry.arguments?.getString("type") ?: ""
+                SeeAllScreen(
+                    navController = navController,
+                    type = type
+                )
+            }
         }
-
     }
-
 }
