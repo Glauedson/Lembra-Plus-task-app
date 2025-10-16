@@ -31,8 +31,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
+import androidx.navigation.NavController
+
 @Composable
-fun TaskCard(props: TaskCardProps) {
+fun TaskCard(props: TaskCardProps, navController: NavController) {
 
     val safeColorHex = props.categoryColorHex ?: "#9D9D9D"
     val categoryColor = Color(safeColorHex.toColorInt())
@@ -52,8 +54,8 @@ fun TaskCard(props: TaskCardProps) {
                 color = Color.White,
                 shape = RoundedCornerShape(12.dp)
             )
-            .padding(16.dp)
             .clickable( onClick = { showModal = true })
+            .padding(16.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             // Header
@@ -146,10 +148,7 @@ fun TaskCard(props: TaskCardProps) {
                     time = props.time
                 ),
                 onDismiss = { showModal = false },
-                onEdit = { task ->
-                    // Aqui você implementa a lógica de edição
-                    showModal = false
-                },
+                navController = navController
             )
         }
     }

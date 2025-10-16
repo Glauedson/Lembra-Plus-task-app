@@ -3,12 +3,36 @@ package com.progmobile.lembraplus.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,10 +44,15 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.progmobile.lembraplus.data.db.AppDatabase
 import com.progmobile.lembraplus.data.repository.TaskRepository
 import com.progmobile.lembraplus.ui.vms.TaskViewModel
 import com.progmobile.lembraplus.ui.vms.TaskViewModelFactory
+import com.progmobile.lembraplus.utils.Formatters
+import com.progmobile.lembraplus.utils.Formatters.toFormattedDateString
+import java.time.LocalDate
+import java.time.LocalTime
 
 data class TaskModalData(
     val id: String,
@@ -32,16 +61,16 @@ data class TaskModalData(
     val categoryName: String?,
     val categoryColorHex: String?,
     val isPinned: Boolean,
-    val date: String?,
-    val time: String?,
-    val createdAt: String?
+    val date: LocalDate?,
+    val time: LocalTime?,
+    val createdAt: Long
 )
 
 @Composable
 fun TaskViewModal(
     task: TaskModalData,
     onDismiss: () -> Unit,
-    onEdit: (TaskModalData) -> Unit = {},
+    navController: NavController
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
 
@@ -68,7 +97,7 @@ fun TaskViewModal(
                 .clickable(
                     onClick = onDismiss,
                     indication = null,
-                    interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                    interactionSource = remember { MutableInteractionSource() }
                 )
                 .padding(24.dp),
             contentAlignment = Alignment.Center
@@ -77,7 +106,7 @@ fun TaskViewModal(
                 modifier = Modifier.clickable(
                     onClick = {},
                     indication = null,
-                    interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                    interactionSource = remember { MutableInteractionSource() }
                 ),
 
                 shape = RoundedCornerShape(24.dp),
@@ -92,10 +121,8 @@ fun TaskViewModal(
                         .verticalScroll(rememberScrollState())
                 ) {
                     // Header
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 15.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 15.dp)
                     ) {
                         // Badge
                         Box(
@@ -110,6 +137,7 @@ fun TaskViewModal(
                                     shape = RoundedCornerShape(20.dp)
                                 )
                                 .padding(horizontal = 12.dp, vertical = 6.dp)
+                                .align(Alignment.CenterStart)
                         ) {
                             Text(
                                 text = task.categoryName ?: "Without Category",
@@ -118,8 +146,45 @@ fun TaskViewModal(
                                 fontWeight = FontWeight.Medium,
                             )
                         }
-
-                        // TO DO: Create Date
+                        if (task.isPinned) {
+                            Box(
+                                modifier = Modifier
+                                    .background(
+                                        color = MaterialTheme.colorScheme.tertiary,
+                                        shape = RoundedCornerShape(20.dp)
+                                    )
+                                    .padding(horizontal = 4.dp, vertical = 4.dp)
+                                    .align(Alignment.Center)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Star,
+                                    contentDescription = "Task pinada",
+                                    modifier = Modifier.size(15.dp),
+                                    tint = Color.White
+                                )
+                            }
+                        }
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f),
+                                    shape = RoundedCornerShape(20.dp)
+                                )
+                                .border(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colorScheme.tertiary,
+                                    shape = RoundedCornerShape(20.dp)
+                                )
+                                .padding(horizontal = 12.dp, vertical = 6.dp)
+                                .align(Alignment.CenterEnd)
+                        ) {
+                            Text(
+                                text = task.createdAt.toFormattedDateString(),
+                                color = MaterialTheme.colorScheme.tertiary,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium,
+                            )
+                        }
                     }
 
                     // Título
@@ -144,7 +209,6 @@ fun TaskViewModal(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     if (task.date != null && task.time != null) {
-                        // Date & Time Section
                         Text(
                             text = "Date & Time",
                             fontSize = 16.sp,
@@ -168,8 +232,9 @@ fun TaskViewModal(
                                     )
                                     .padding(16.dp)
                             ) {
+                                val dateInMillis = Formatters.dateInMillis(task.date)
                                 Text(
-                                    text = task.date,
+                                    text = dateInMillis.toFormattedDateString(),
                                     color = Color.Gray,
                                     fontSize = 14.sp
                                 )
@@ -186,7 +251,7 @@ fun TaskViewModal(
                                     .padding(16.dp)
                             ) {
                                 Text(
-                                    text = task.time,
+                                    text = Formatters.formattedTime(task.time.hour, task.time.minute),
                                     color = Color.Gray,
                                     fontSize = 14.sp
                                 )
@@ -217,7 +282,10 @@ fun TaskViewModal(
 
                         // Button edit
                         Button(
-                            onClick = { onEdit(task) },
+                            onClick = {
+                                onDismiss()
+                                navController.navigate("createNote?taskId=${task.id}")
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(
@@ -239,7 +307,7 @@ fun TaskViewModal(
             onDismissRequest = { showDeleteDialog = false },
             title = {
                 Text(
-                    text = "Delete note?",
+                    text = "Delete task?",
                     fontWeight = FontWeight.Bold
                 )
             },
