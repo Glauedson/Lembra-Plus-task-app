@@ -23,6 +23,9 @@ interface TaskDao{
     @Delete
     suspend fun delete(task: Task)
 
+    @Query("DELETE FROM tasks WHERE id = :task")
+    suspend fun delete(task: Int)
+
     @Transaction
     @Query("SELECT * FROM tasks ORDER BY created_at DESC")
     suspend fun getLatestWithCategory(): List<TaskWithCategory>

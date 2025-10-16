@@ -147,10 +147,14 @@ fun HomeScreen(navController: NavHostController) {
                         tasksFixed.forEach { task ->
                             TaskCard(
                                 props = TaskCardProps(
+                                    id = task.task.id.toString(),
                                     title = task.task.title,
                                     description = task.task.description,
                                     categoryName = task.category?.name,
                                     categoryColorHex = task.category?.colorHex,
+                                    createdAt = task.task.createdAt.toString(),
+                                    date = task.task.date?.toString(),
+                                    time = task.task.time?.toString(),
                                     width = 250,
                                     isPinned = true
                                 )
@@ -250,10 +254,14 @@ fun HomeScreen(navController: NavHostController) {
                     tasksWithCategory.take(3).forEach { taskWithCategory ->
                         TaskCard(
                             props = TaskCardProps(
+                                id = taskWithCategory.task.id.toString(),
                                 title = taskWithCategory.task.title,
                                 description = taskWithCategory.task.description,
                                 categoryName = taskWithCategory.category?.name,
                                 categoryColorHex = taskWithCategory.category?.colorHex,
+                                createdAt = taskWithCategory.task.createdAt.toString(),
+                                date = taskWithCategory.task.date?.toString(),
+                                time = taskWithCategory.task.time?.toString(),
                                 isPinned = taskWithCategory.task.isFixed
                             )
                         )

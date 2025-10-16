@@ -2,6 +2,7 @@ package com.progmobile.lembraplus.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -25,15 +30,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.progmobile.lembraplus.utils.ColorUtils
 import androidx.core.graphics.toColorInt
-
 @Composable
 fun TaskCard(props: TaskCardProps) {
 
     val safeColorHex = props.categoryColorHex ?: "#9D9D9D"
     val categoryColor = Color(safeColorHex.toColorInt())
-
+    var showModal by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -50,6 +53,7 @@ fun TaskCard(props: TaskCardProps) {
                 shape = RoundedCornerShape(12.dp)
             )
             .padding(16.dp)
+            .clickable( onClick = { showModal = true })
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             // Header
@@ -125,6 +129,27 @@ fun TaskCard(props: TaskCardProps) {
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
                 lineHeight = 18.sp
+            )
+        }
+
+        if (showModal) {
+            TaskViewModal(
+                task = TaskModalData(
+                    id = props.id,
+                    title = props.title,
+                    description = props.description,
+                    categoryName = props.categoryName,
+                    categoryColorHex = props.categoryColorHex,
+                    isPinned = props.isPinned,
+                    createdAt = props.createdAt,
+                    date = props.date,
+                    time = props.time
+                ),
+                onDismiss = { showModal = false },
+                onEdit = { task ->
+                    // Aqui você implementa a lógica de edição
+                    showModal = false
+                },
             )
         }
     }

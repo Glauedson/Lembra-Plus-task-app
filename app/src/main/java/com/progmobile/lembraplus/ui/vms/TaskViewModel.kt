@@ -8,7 +8,6 @@ import com.progmobile.lembraplus.data.repository.TaskRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 class TaskViewModel(private val repository: TaskRepository): ViewModel(){
 
@@ -41,7 +40,7 @@ class TaskViewModel(private val repository: TaskRepository): ViewModel(){
         loadAllFixed()
     }
 
-    fun deleteTask(task: Task) = viewModelScope.launch {
+    fun deleteTask(task: Int) = viewModelScope.launch {
         repository.delete(task)
         loadAllTasks()
         loadAllFixed()

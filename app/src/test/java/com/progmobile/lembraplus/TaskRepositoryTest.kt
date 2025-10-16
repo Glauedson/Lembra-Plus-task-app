@@ -24,7 +24,7 @@ class FakeTaskDao : TaskDao {
         if (idx >= 0) items[idx] = task
     }
 
-    override suspend fun delete(task: Task) {
+    override suspend fun delete(task: Int) {
         items.removeIf { it.id == task.id }
     }
 

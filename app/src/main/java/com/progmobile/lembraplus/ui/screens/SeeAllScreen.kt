@@ -74,10 +74,14 @@ fun SeeAllScreen(
                         tasksFixed.forEach { card ->
                             TaskCard(
                                 TaskCardProps(
+                                    id = card.task.id.toString(),
                                     title = card.task.title,
                                     description = card.task.description,
                                     categoryName = card.category?.name,
                                     categoryColorHex = card.category?.colorHex,
+                                    createdAt = card.task.createdAt.toString(),
+                                    date = card.task.date?.toString(),
+                                    time = card.task.time?.toString(),
                                     isPinned = true
                                 )
                             )
@@ -100,10 +104,14 @@ fun SeeAllScreen(
                         allTasks.forEach { card ->
                             TaskCard(
                                 TaskCardProps(
+                                    id = card.task.id.toString(),
                                     title = card.task.title,
                                     description = card.task.description,
                                     categoryName = card.category?.name,
                                     categoryColorHex = card.category?.colorHex,
+                                    createdAt = card.task.createdAt.toString(),
+                                    date = card.task.date?.toString(),
+                                    time = card.task.time?.toString(),
                                     isPinned = card.task.isFixed
                                 )
                             )
