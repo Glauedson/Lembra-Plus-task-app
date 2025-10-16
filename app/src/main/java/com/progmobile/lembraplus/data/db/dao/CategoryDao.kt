@@ -23,8 +23,8 @@ interface CategoryDao {
     @Update
     suspend fun update(category: Category)
 
-    @Delete
-    suspend fun delete(category: Category)
+    @Query("DELETE FROM categories WHERE id = :id")
+    suspend fun delete(id: Int)
 
     @Query("SELECT c.*, (SELECT COUNT(*) FROM tasks WHERE tasks.category_id = c.id) as taskCount FROM categories c ORDER BY c.category_name COLLATE NOCASE")
     suspend fun getAllWithTaskCount(): List<CategoryWithTaskCount>

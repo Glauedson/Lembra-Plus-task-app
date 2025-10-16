@@ -33,8 +33,8 @@ class CategoryViewModel(private val repository: CategoryRepository) : ViewModel(
         loadAll()
     }
 
-    fun deleteCategory(categoryWithTaskCount: CategoryWithTaskCount) = viewModelScope.launch {
-        repository.delete(categoryWithTaskCount.category)
+    fun deleteCategory(id: Int) = viewModelScope.launch {
+        repository.delete(id)
         loadAll()
     }
 
