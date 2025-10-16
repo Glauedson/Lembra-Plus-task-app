@@ -19,43 +19,32 @@ class TaskViewModel(private val repository: TaskRepository): ViewModel(){
     val allTasks: StateFlow<List<TaskWithCategory>> = _allTasks
 
     init {
-        viewModelScope.launch { loadAll() }
+        viewModelScope.launch { loadAllTasks(); loadAllFixed() }
     }
 
-    fun loadAll() = viewModelScope.launch {
-        _tasksFixed.value = repository.getLatest()
+    fun loadAllTasks() = viewModelScope.launch {
         _allTasks.value = repository.getLatest()
     }
-
-    fun loadAllOrderedByDate() = viewModelScope.launch {
-        _allTasks.value = repository.getAllOrderedByDate()
-    }
-
-    fun loadByDate(date: LocalDate) = viewModelScope.launch {
-        _allTasks.value = repository.getByDate(date)
-    }
-
-    fun loadByCategory(categoryId: Int) = viewModelScope.launch {
-        _allTasks.value = repository.getByCategory(categoryId)
-    }
-
     fun loadAllFixed() = viewModelScope.launch {
         _tasksFixed.value = repository.getAllFixed()
     }
 
     fun addTask(task: Task) = viewModelScope.launch {
         repository.save(task)
-        loadAll()
+        loadAllTasks()
+        loadAllFixed()
     }
 
     fun updateTask(task: Task) = viewModelScope.launch {
         repository.update(task)
-        loadAll()
+        loadAllTasks()
+        loadAllFixed()
     }
 
     fun deleteTask(task: Task) = viewModelScope.launch {
         repository.delete(task)
-        loadAll()
+        loadAllTasks()
+        loadAllFixed()
     }
 
 }
