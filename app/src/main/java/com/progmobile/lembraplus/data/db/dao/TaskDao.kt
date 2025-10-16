@@ -20,16 +20,21 @@ interface TaskDao{
     @Update
     suspend fun update(task: Task)
 
-    @Delete
-    suspend fun delete(task: Task)
+    @Query("DELETE FROM tasks WHERE id = :id")
+    suspend fun delete(id: Int)
 
-    @Query("DELETE FROM tasks WHERE id = :task")
-    suspend fun delete(task: Int)
+    @Transaction
+    @Query("SELECT * FROM tasks WHERE id = :taskId")
+    suspend fun getTaskById(taskId: Int): TaskWithCategory?
+
+    @Transaction
+    @Query("SELECT * FROM tasks WHERE task_tile LIKE :query ORDER BY is_fixed DESC, created_at DESC")
+    suspend fun searchTasks(query: String): List<TaskWithCategory>
 
     @Transaction
     @Query("SELECT * FROM tasks ORDER BY created_at DESC")
     suspend fun getLatestWithCategory(): List<TaskWithCategory>
-      
+
     @Transaction
     @Query("SELECT * FROM tasks ORDER BY created_at DESC")
     suspend fun getLatest(): List<TaskWithCategory>

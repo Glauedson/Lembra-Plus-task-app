@@ -11,15 +11,14 @@ open class TaskRepository(private val dao: TaskDao){
 
     suspend fun update(task: Task) = dao.update(task)
 
-    suspend fun delete(task: Int) = dao.delete(task)
+    suspend fun delete(id: Int) = dao.delete(id)
 
-    open suspend fun getAllOrderedByDate(): List<TaskWithCategory> = dao.getAllOrdered()
+    suspend fun getTaskById(taskId: Int): TaskWithCategory? = dao.getTaskById(taskId)
+
+
+    suspend fun searchTasks(query: String): List<TaskWithCategory> = dao.searchTasks("%$query%")
 
     suspend fun  getLatest(): List<TaskWithCategory> = dao.getLatest()
-
-    suspend fun getByCategory(categoryId: Int): List<TaskWithCategory> = dao.getByCategory(categoryId)
-
-    suspend fun getByDate(date: LocalDate): List<TaskWithCategory> = dao.getByDate(date)
 
     suspend fun getAllFixed(): List<TaskWithCategory> = dao.getAllFixed()
 

@@ -8,6 +8,7 @@ import com.progmobile.lembraplus.data.repository.TaskRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class TaskViewModel(private val repository: TaskRepository): ViewModel(){
 
@@ -17,8 +18,23 @@ class TaskViewModel(private val repository: TaskRepository): ViewModel(){
     private val _allTasks = MutableStateFlow<List<TaskWithCategory>>(emptyList())
     val allTasks: StateFlow<List<TaskWithCategory>> = _allTasks
 
+    private val _searchResults = MutableStateFlow<List<TaskWithCategory>>(emptyList())
+    val searchResults: StateFlow<List<TaskWithCategory>> = _searchResults
+
     init {
         viewModelScope.launch { loadAllTasks(); loadAllFixed() }
+    }
+
+    suspend fun getTaskById(taskId: Int): TaskWithCategory? {
+        return repository.getTaskById(taskId)
+    }
+
+    fun searchTasks(query: String) = viewModelScope.launch {
+        if (query.isBlank()) {
+            _searchResults.value = emptyList()
+        } else {
+            _searchResults.value = repository.searchTasks(query)
+        }
     }
 
     fun loadAllTasks() = viewModelScope.launch {
