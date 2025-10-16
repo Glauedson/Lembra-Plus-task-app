@@ -1,10 +1,12 @@
 package com.progmobile.lembraplus.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,10 +27,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -50,7 +58,7 @@ import com.progmobile.lembraplus.utils.Routes
 
 @Composable
 fun HomeScreen(navController: NavHostController) {
-    
+
     val scrollVertical = rememberScrollState()
     val scrollHorizontal = rememberScrollState()
 
@@ -119,27 +127,45 @@ fun HomeScreen(navController: NavHostController) {
                         }
                     )
                 }
-                Row(
+
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(130.dp)
-                        .horizontalScroll(scrollVertical)
-                        .clip(RoundedCornerShape(10.dp)),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        .background(MaterialTheme.colorScheme.background)
+                        .clip(RoundedCornerShape(10.dp))
                 ) {
-                    taskViewModel.loadAllFixed()
-                    tasksFixed.forEach { task ->
-                        TaskCard(
-                            props = TaskCardProps(
-                                title = task.task.title,
-                                description = task.task.description,
-                                categoryName = task.category?.name,
-                                categoryColorHex = task.category?.colorHex,
-                                width = 250,
-                                isPinned = true
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(130.dp)
+                            .horizontalScroll(scrollVertical)
+                            .clip(RoundedCornerShape(10.dp))
+                            .padding(2.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        taskViewModel.loadAllFixed()
+                        tasksFixed.forEach { task ->
+                            TaskCard(
+                                props = TaskCardProps(
+                                    title = task.task.title,
+                                    description = task.task.description,
+                                    categoryName = task.category?.name,
+                                    categoryColorHex = task.category?.colorHex,
+                                    width = 250,
+                                    isPinned = true
+                                )
                             )
-                        )
+                        }
                     }
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .fadingEdgeOverlay(
+                                scrollState = scrollVertical,
+                                fadeWidth = 32.dp,
+                                overlayColor = MaterialTheme.colorScheme.background
+                            )
+                    )
                 }
             }
 
@@ -172,14 +198,14 @@ fun HomeScreen(navController: NavHostController) {
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.clickable {
-                            // navController.navigate(Routes.SeeAll.createRoute("categories"))
+                            navController.navigate(Routes.SeeAll.createRoute("categories"))
                         }
                     )
                 }
                 Column(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    categories.sortedByDescending{ it.taskCount }.take(3).forEach { cat ->
+                    categories.sortedByDescending { it.taskCount }.take(3).forEach { cat ->
                         CategoryCard(
                             props = CategoryCardProps(
                                 name = cat.category.name,
@@ -214,7 +240,7 @@ fun HomeScreen(navController: NavHostController) {
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.clickable {
-                            // navController.navigate(Routes.SeeAll.createRoute("notes"))
+                            navController.navigate(Routes.SeeAll.createRoute("notes"))
                         }
                     )
                 }
