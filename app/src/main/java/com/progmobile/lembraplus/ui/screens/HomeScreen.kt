@@ -20,25 +20,48 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.progmobile.lembraplus.R
+import com.progmobile.lembraplus.data.db.AppDatabase
+import com.progmobile.lembraplus.data.repository.CategoryRepository
+import com.progmobile.lembraplus.data.repository.TaskRepository
 import com.progmobile.lembraplus.ui.components.CategoryCard.CategoryCard
 import com.progmobile.lembraplus.ui.components.CategoryCard.CategoryCardProps
 import com.progmobile.lembraplus.ui.components.NavBar.NavBar
 import com.progmobile.lembraplus.ui.components.NavBar.NavProps
 import com.progmobile.lembraplus.ui.components.TaskCard
 import com.progmobile.lembraplus.ui.components.TaskCardProps
+import com.progmobile.lembraplus.ui.vms.CategoryViewModel
+import com.progmobile.lembraplus.ui.vms.CategoryViewModelFactory
+import com.progmobile.lembraplus.ui.vms.TaskViewModel
+import com.progmobile.lembraplus.ui.vms.TaskViewModelFactory
 import com.progmobile.lembraplus.utils.Routes
 
 @Composable
 fun HomeScreen(navController: NavHostController) {
+    
     val scrollVertical = rememberScrollState()
     val scrollHorizontal = rememberScrollState()
+
+    val context = LocalContext.current
+    val taskDao = AppDatabase.getInstance(context).taskDao()
+    val taskRepository = remember { TaskRepository(taskDao) }
+    val taskViewModel: TaskViewModel =
+        viewModel(factory = TaskViewModelFactory(taskRepository))
+
+    val tasksWithCategory by taskViewModel.allTasks.collectAsState()
+    val tasksFixed by taskViewModel.tasksFixed.collectAsState()
 
     Scaffold(
         bottomBar = {
@@ -46,20 +69,21 @@ fun HomeScreen(navController: NavHostController) {
         }
     ) { pad ->
 
-        Column (
+        Column(
             modifier = Modifier
                 .padding(pad)
                 .padding(start = 25.dp, end = 25.dp)
                 .verticalScroll(scrollHorizontal)
                 .background(MaterialTheme.colorScheme.background)
                 .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
             // Header
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 20.dp),
-                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+                horizontalArrangement = Arrangement.Center
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.logo),
@@ -70,169 +94,147 @@ fun HomeScreen(navController: NavHostController) {
             }
 
             // Favorited
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+            Column(
+                verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
-                Text(
-                    "Favorited",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontWeight = FontWeight.Medium
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        "Favorited",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Medium
 
-                )
+                    )
 
-                Text(
-                    "See All",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.tertiary,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.clickable {
-                        navController.navigate(Routes.SeeAll.createRoute("favorites"))
+                    Text(
+                        "See All",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.clickable {
+                            navController.navigate(Routes.SeeAll.createRoute("favorites"))
+                        }
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(130.dp)
+                        .horizontalScroll(scrollVertical)
+                        .clip(RoundedCornerShape(10.dp)),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    taskViewModel.loadAllFixed()
+                    tasksFixed.forEach { task ->
+                        TaskCard(
+                            props = TaskCardProps(
+                                title = task.task.title,
+                                description = task.task.description,
+                                categoryName = task.category?.name,
+                                categoryColorHex = task.category?.colorHex,
+                                width = 250,
+                                isPinned = true
+                            )
+                        )
                     }
-                )
+                }
             }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(130.dp)
-                    .horizontalScroll(scrollVertical)
-                    .clip(RoundedCornerShape(10.dp)),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-
-                TaskCard(props = TaskCardProps(
-                    title = "Criar Apresentação",
-                    description = "Fiquei com o capitulo 1.9, criar uma apresentação sobre a conciencia negra, indigena e outros novos minorias no brasil",
-                    categoryName = "trabalho",
-                    categoryColorHex = "#FF9800",
-                    width = 300,
-                    isPinned = true
-                ))
-
-                TaskCard(props = TaskCardProps(
-                    title = "Criar Apresentação",
-                    description = "Fiquei com o capitulo 1.9, criar uma apresentação sobre a conciencia negra, indigena e outros novos minorias no brasil",
-                    categoryName = "trabalho",
-                    categoryColorHex = "#FF9800",
-                    width = 300,
-                    isPinned = true
-                ))
-
-                TaskCard(props = TaskCardProps(
-                    title = "Criar Apresentação",
-                    description = "Fiquei com o capitulo 1.9, criar uma apresentação sobre a conciencia negra, indigena e outros novos minorias no brasil",
-                    categoryName = "trabalho",
-                    categoryColorHex = "#FF9800",
-                    width = 300,
-                    isPinned = true
-                ))
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
 
             // Categories
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+            val categoryDao = AppDatabase.getInstance(context).categoryDao()
+            val categoryRepository = remember { CategoryRepository(categoryDao) }
+            val categoryViewModel: CategoryViewModel =
+                viewModel(factory = CategoryViewModelFactory(categoryRepository))
+
+            val categories by categoryViewModel.categories.collectAsState()
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
-                Text(
-                    "Categories",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontWeight = FontWeight.Medium
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        "Categories",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Medium
 
-                )
+                    )
 
-                Text(
-                    "See All",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.tertiary,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.clickable {
-                        navController.navigate(Routes.SeeAll.createRoute("categories"))
+                    Text(
+                        "See All",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.clickable {
+                            // navController.navigate(Routes.SeeAll.createRoute("categories"))
+                        }
+                    )
+                }
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    categories.sortedByDescending{ it.taskCount }.take(3).forEach { cat ->
+                        CategoryCard(
+                            props = CategoryCardProps(
+                                name = cat.category.name,
+                                colorHex = cat.category.colorHex,
+                                quant = cat.taskCount
+                            )
+                        )
                     }
-                )
+                }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
-            CategoryCard(props = CategoryCardProps(
-                name = "Trabalho",
-                colorHex = "#FF9800"
-            ))
+            // Latest tasks added
 
-            Spacer(modifier = Modifier.height(10.dp))
-            CategoryCard(props = CategoryCardProps(
-                name = "Trabalho",
-                colorHex = "#FF9800"
-            ))
-
-            Spacer(modifier = Modifier.height(10.dp))
-            CategoryCard(props = CategoryCardProps(
-                name = "Trabalho",
-                colorHex = "#FF9800"
-            ))
-
-            Spacer(modifier = Modifier.height(15.dp))
-
-            // lateste tasks added
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+            Column(
+                verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
-                Text(
-                    "Latest tasks added",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontWeight = FontWeight.Medium
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        "Latest tasks added",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Medium
 
-                )
+                    )
 
-                Text(
-                    "See All",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.tertiary,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.clickable {
-                        navController.navigate(Routes.SeeAll.createRoute("notes"))
+                    Text(
+                        "See All",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.clickable {
+                            // navController.navigate(Routes.SeeAll.createRoute("notes"))
+                        }
+                    )
+                }
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    tasksWithCategory.take(3).forEach { taskWithCategory ->
+                        TaskCard(
+                            props = TaskCardProps(
+                                title = taskWithCategory.task.title,
+                                description = taskWithCategory.task.description,
+                                categoryName = taskWithCategory.category?.name,
+                                categoryColorHex = taskWithCategory.category?.colorHex,
+                                isPinned = taskWithCategory.task.isFixed
+                            )
+                        )
                     }
-                )
+                }
+                Spacer(modifier = Modifier.height(25.dp))
             }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            TaskCard(props = TaskCardProps(
-                title = "Criar Apresentação",
-                description = "Fiquei com o capitulo 1.9, criar uma apresentação sobre a conciencia negra, indigena e outros novos minorias no brasil",
-                categoryName = "trabalho",
-                categoryColorHex = "#FF9800",
-                isPinned = false
-            ))
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            TaskCard(props = TaskCardProps(
-                title = "Criar Apresentação",
-                description = "Fiquei com o capitulo 1.9, criar uma apresentação sobre a conciencia negra, indigena e outros novos minorias no brasil",
-                categoryName = "trabalho",
-                categoryColorHex = "#FF9800",
-                isPinned = false
-            ))
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            TaskCard(props = TaskCardProps(
-                title = "Criar Apresentação",
-                description = "Fiquei com o capitulo 1.9, criar uma apresentação sobre a conciencia negra, indigena e outros novos minorias no brasil",
-                categoryName = "trabalho",
-                categoryColorHex = "#FF9800",
-                isPinned = false
-            ))
-
         }
     }
 }
-

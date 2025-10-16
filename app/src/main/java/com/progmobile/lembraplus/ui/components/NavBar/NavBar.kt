@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -47,15 +48,14 @@ fun NavBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(60.dp)
     ) {
 
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp)
-                .offset(y = 40.dp)
+                .height(100.dp)
                 .shadow(
                     elevation = 15.dp,
                     shape = RoundedCornerShape(0.dp),
@@ -85,13 +85,12 @@ fun NavBar(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 45.dp, end = 45.dp, top = 30.dp)
+                .padding(start = 45.dp, end = 45.dp)
         ) {
             IconButton(
                 onClick = { props.navController.navigate("Home") },
                 modifier = Modifier
-                    .height(60.dp)
-                    .width(60.dp)
+                    .size(60.dp)
                     .offset(y = 10.dp)
             ) {
                 Icon(
@@ -99,37 +98,33 @@ fun NavBar(
                     contentDescription = "Home",
                     tint = homeIconState.tint,
                     modifier = Modifier
-                        .width(35.dp)
-                        .height(35.dp)
+                        .size(35.dp)
                 )
             }
 
             IconButton(
                 onClick = { props.navController.navigate("createNote") },
                 modifier = Modifier
-                    .offset(y = (-33).dp)
+                    .offset(y = (-23).dp)
+                    .size(80.dp)
                     .background(
                         color = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(50.dp)
+                        shape = RoundedCornerShape(50)
                     )
-                    .width(70.dp)
-                    .height(90.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Create Note",
                     tint = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
-                        .width(30.dp)
-                        .height(30.dp)
+                        .size(30.dp)
                 )
             }
 
             IconButton(
                 onClick = { props.navController.navigate("about") },
                 modifier = Modifier
-                    .height(60.dp)
-                    .width(60.dp)
+                    .size(60.dp)
                     .offset(y = 10.dp)
             ) {
                 Icon(
@@ -137,8 +132,7 @@ fun NavBar(
                     contentDescription = "About",
                     tint = aboutIconState.tint,
                     modifier = Modifier
-                        .width(35.dp)
-                        .height(35.dp)
+                        .size(35.dp)
                 )
             }
         }
