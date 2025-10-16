@@ -12,11 +12,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.progmobile.lembraplus.data.db.AppDatabase
+import com.progmobile.lembraplus.data.repository.CategoryRepository
 import com.progmobile.lembraplus.data.repository.TaskRepository
+import com.progmobile.lembraplus.ui.components.CategoryCard.CategoryCard
+import com.progmobile.lembraplus.ui.components.CategoryCard.CategoryCardProps
 import com.progmobile.lembraplus.ui.components.HeaderTitle.HeaderTitle
 import com.progmobile.lembraplus.ui.components.HeaderTitle.HeaderTitleProps
 import com.progmobile.lembraplus.ui.components.TaskCard
 import com.progmobile.lembraplus.ui.components.TaskCardProps
+import com.progmobile.lembraplus.ui.vms.CategoryViewModel
+import com.progmobile.lembraplus.ui.vms.CategoryViewModelFactory
 import com.progmobile.lembraplus.ui.vms.TaskViewModel
 import com.progmobile.lembraplus.ui.vms.TaskViewModelFactory
 import com.progmobile.lembraplus.utils.Routes
@@ -29,6 +34,7 @@ fun SeeAllScreen(
 ) {
 
     val context = LocalContext.current
+
     val taskDao = AppDatabase.getInstance(context).taskDao()
     val taskRepository = remember { TaskRepository(taskDao) }
     val taskViewModel: TaskViewModel =
@@ -36,6 +42,13 @@ fun SeeAllScreen(
 
     val allTasks by taskViewModel.allTasks.collectAsState()
     val tasksFixed by taskViewModel.tasksFixed.collectAsState()
+
+    val categoryDao = AppDatabase.getInstance(context).categoryDao()
+    val categoryRepository = remember { CategoryRepository(categoryDao) }
+    val categoryViewModel: CategoryViewModel =
+        viewModel(factory = CategoryViewModelFactory(categoryRepository))
+
+    val categories by categoryViewModel.categories.collectAsState()
 
     Scaffold() { padding ->
         Column(
@@ -53,9 +66,9 @@ fun SeeAllScreen(
                     }
                 )
             )
-            Column (
+            Column(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
-            ){
+            ) {
                 when (type) {
                     "favorites" -> {
                         tasksFixed.forEach { card ->
@@ -66,6 +79,32 @@ fun SeeAllScreen(
                                     categoryName = card.category?.name,
                                     categoryColorHex = card.category?.colorHex,
                                     isPinned = true
+                                )
+                            )
+                        }
+                    }
+
+                    "categories" -> {
+                        categories.sortedByDescending { it.taskCount }.forEach { card ->
+                            CategoryCard(
+                                CategoryCardProps(
+                                    name = card.category.name,
+                                    colorHex = card.category.colorHex,
+                                    quant = card.taskCount
+                                )
+                            )
+                        }
+                    }
+
+                    "notes" -> {
+                        allTasks.forEach { card ->
+                            TaskCard(
+                                TaskCardProps(
+                                    title = card.task.title,
+                                    description = card.task.description,
+                                    categoryName = card.category?.name,
+                                    categoryColorHex = card.category?.colorHex,
+                                    isPinned = card.task.isFixed
                                 )
                             )
                         }
