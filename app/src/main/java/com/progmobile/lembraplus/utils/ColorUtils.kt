@@ -21,7 +21,7 @@ object ColorUtils {
         if (hex.isNullOrBlank()) return Color(0xFF9D9D9D)
 
         val normalized = try {
-            ColorUtils.normalizeHex(hex)
+            normalizeHex(hex)
         } catch (t: Throwable) {
             null
         } ?: return Color(0xFF9D9D9D)

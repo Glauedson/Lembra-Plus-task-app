@@ -21,18 +21,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.toColorInt
+import com.progmobile.lembraplus.utils.ColorUtils
 
 @Composable
 fun CategoryCard(props: CategoryCardProps) {
+
+    val categoryColor = ColorUtils.safeParseColor(props.colorHex)
+
     Box (
         modifier = Modifier
             .border(
                 width = 1.dp,
-                color = Color(android.graphics.Color.parseColor(props.colorHex)),
+                color = categoryColor,
                 shape = RoundedCornerShape(15.dp)
             )
             .background(
-                Color(android.graphics.Color.parseColor(props.colorHex)).copy(alpha = 0.15f),
+                categoryColor.copy(alpha = 0.15f),
                 shape = RoundedCornerShape(15.dp)
             )
             .padding(horizontal = 20.dp, vertical = 16.dp)
@@ -46,17 +51,16 @@ fun CategoryCard(props: CategoryCardProps) {
             Column {
                 Text(
                     text = props.name,
-                    color = Color(android.graphics.Color.parseColor(props.colorHex))
+                    color = categoryColor
                 )
                 Text(
                     text = "${props.quant} tasks",
-                    color = Color(android.graphics.Color.parseColor(props.colorHex))
+                    color = categoryColor
                 )
             }
 
             Column(
                 modifier = Modifier
-                    .fillMaxHeight()
                     .padding(start = 10.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.End
@@ -65,7 +69,7 @@ fun CategoryCard(props: CategoryCardProps) {
                     imageVector = Icons.Default.Edit,
                     contentDescription = "Category edit icon",
                     modifier = Modifier.size(23.dp),
-                    tint = Color(android.graphics.Color.parseColor(props.colorHex))
+                    tint = categoryColor
                 )
             }
         }
