@@ -144,8 +144,8 @@ fun CreateNewTaskScreen(
                             isFixed = isFixed,
                             createdAt = System.currentTimeMillis()
                         )
-
                         viewModel.addTask(task)
+                        navController.navigate("home")
                     },
                     shape = RoundedCornerShape(18.dp),
                     modifier = Modifier
@@ -178,7 +178,9 @@ fun CreateNewTaskScreen(
         ) {
             HeaderTitle(
                 props = HeaderTitleProps(
-                    title = "Create New Note", onClick = {})
+                    title = "Create New Note",
+                    onClick = {navController.navigate("home")}
+                )
             )
             Column(
                 modifier = Modifier
@@ -257,12 +259,12 @@ fun CreateNewTaskScreen(
                                 modifier = Modifier, viewModel = categoryViewModel
                             )
                             categories.forEach { cat ->
-                                key(cat.id) {
-                                    val buttonColor = safeParseColor(cat.colorHex)
-                                    val isSelected = cat.id == selectedCategoryId
+                                key(cat.category.id) {
+                                    val buttonColor = safeParseColor(cat.category.colorHex)
+                                    val isSelected = cat.category.id == selectedCategoryId
                                     OutlinedButton(
                                         onClick = {
-                                            selectedCategoryId = if (isSelected) null else cat.id
+                                            selectedCategoryId = if (isSelected) null else cat.category.id
                                         },
                                         colors = ButtonDefaults.outlinedButtonColors(
                                             containerColor = if (isSelected) buttonColor else buttonColor.copy(
@@ -273,7 +275,7 @@ fun CreateNewTaskScreen(
                                         border = BorderStroke(1.dp, buttonColor),
                                         shape = RoundedCornerShape(30.dp)
                                     ) {
-                                        Text(cat.name)
+                                        Text(cat.category.name)
                                     }
                                 }
                             }

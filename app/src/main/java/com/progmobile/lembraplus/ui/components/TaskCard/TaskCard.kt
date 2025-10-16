@@ -25,9 +25,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.progmobile.lembraplus.utils.ColorUtils
+import androidx.core.graphics.toColorInt
 
 @Composable
 fun TaskCard(props: TaskCardProps) {
+
+    val safeColorHex = props.categoryColorHex ?: "#9D9D9D"
+    val categoryColor = Color(safeColorHex.toColorInt())
+
+
     Box(
         modifier = Modifier
             .then(
@@ -56,19 +63,19 @@ fun TaskCard(props: TaskCardProps) {
 
                     modifier = Modifier
                         .background(
-                            color = Color(android.graphics.Color.parseColor(props.categoryColorHex)).copy(alpha = 0.15f),
+                            color = categoryColor.copy(alpha = 0.15f),
                             shape = RoundedCornerShape(20.dp)
                         )
                         .border(
                             width = 1.dp,
-                            color = Color(android.graphics.Color.parseColor(props.categoryColorHex)),
+                            color = categoryColor,
                             shape = RoundedCornerShape(20.dp)
                         )
                         .padding(horizontal = 10.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = props.categoryName,
-                        color = Color(android.graphics.Color.parseColor(props.categoryColorHex)),
+                        text = props.categoryName ?: "Without Category",
+                        color = categoryColor,
                         fontSize = 12.sp,
                         style = MaterialTheme.typography.titleLarge
                     )
@@ -104,7 +111,7 @@ fun TaskCard(props: TaskCardProps) {
                 fontSize = 16.sp,
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.Black,
-                maxLines = 2,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
 
@@ -112,7 +119,7 @@ fun TaskCard(props: TaskCardProps) {
 
             // Description
             Text(
-                text = props.description,
+                text = props.description ?: "",
                 fontSize = 13.sp,
                 color = Color.Gray,
                 maxLines = 3,
