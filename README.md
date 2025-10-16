@@ -35,6 +35,7 @@ Lembra+ is a productivity app designed to help you manage notes and tasks in an 
 
 ## 🟦 About project
 </div>
+
 **Lembra+** is a note-taking mobile application created to help users easily write, organize, and manage their notes in a simple and intuitive way. The project was developed as part of the **System Analysis and Development** degree program, for the **Mobile Development** course, by [Glauedson Carlos](https://github.com/Glauedson) and [Gustavo Sousa](https://github.com/GustavoDeltta).
 
 <div id=2>
