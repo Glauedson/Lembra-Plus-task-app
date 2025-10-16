@@ -20,14 +20,14 @@ Lembra+ is a productivity app designed to help you manage notes and tasks in an 
 
 ## 🟦 Topics
 
-- [About project](#🟦-about-project)  
-- [Functions](#🟦-functions)  
-- [Technologies used](#🟦-technologies-used)  
-- [How to install](#🟦-how-to-install)
-- [Screenshots](#🟦-screenshots)  
-- [Architecture](#🟦-architecture)  
-- [License](LICENSE) 
-- [Developers](#🟦-developers) 
+- [About project](#about-project)
+- [Functions](#functions)
+- [Technologies used](#technologies-used)
+- [How to install](#how-to-install)
+- [Screenshots](#screenshots)
+- [Architecture](#architecture)
+- [License](LICENSE)
+- [Developers](#developers)
 
 ---
 
@@ -61,7 +61,7 @@ To run the project locally, follow the steps below:
  1. **Clone this repository**
 
     ```bash
-    git clone https://github.com/usuario/lembraplus.git
+    git clone https://github.com/Glauedson/Lembra-Plus-task-app.git
     ```
 
   2. **Open the project in Android Studio**
