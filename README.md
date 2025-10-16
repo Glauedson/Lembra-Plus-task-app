@@ -20,22 +20,27 @@ Lembra+ is a productivity app designed to help you manage notes and tasks in an 
 
 ## 🟦 Topics
 
-- [About project](#about-project)
-- [Functions](#functions)
-- [Technologies used](#technologies-used)
-- [How to install](#how-to-install)
-- [Screenshots](#screenshots)
-- [Architecture](#architecture)
+- [About project](#1)
+- [Functions](#2)
+- [Technologies used](#3)
+- [How to install](#4)
+- [Screenshots](#5)
+- [Architecture](#6)
 - [License](LICENSE)
-- [Developers](#developers)
+- [Developers](#7)
 
 ---
 
-## 🟦 About project
+<div id=1>
 
+## 🟦 About project
+</div>
 **Lembra+** is a note-taking mobile application created to help users easily write, organize, and manage their notes in a simple and intuitive way. The project was developed as part of the **System Analysis and Development** degree program, for the **Mobile Development** course, by [Glauedson Carlos](https://github.com/Glauedson) and [Gustavo Sousa](https://github.com/GustavoDeltta).
 
+<div id=2>
+
 ## 🟦 Functions
+</div>
 
 With Lembra+, you can:
 
@@ -44,7 +49,10 @@ With Lembra+, you can:
 - Set due dates for better planning  
 - Pin important notes and tasks to the home screen for quick access  
 
+<div id=3>
+
 ## 🟦 Technologies used
+</div>
 
 - Linguagem: **Kotlin**
 - IDE: **Android Studio**
@@ -56,7 +64,11 @@ With Lembra+, you can:
 <img src="https://logo.svgcdn.com/d/jetpackcompose-original-8x.png" width=46px/>
 </div>
 
+<div id=4>
+
 ## 🟦 How to install
+</div>
+
 To run the project locally, follow the steps below:
  1. **Clone this repository**
 
@@ -80,11 +92,17 @@ To run the project locally, follow the steps below:
         - Connect a physical Android device or start an emulator
         - Click the **Run** ▶️ button on the toolbar
 
+<div id=5>
+
 ## 🟦 Screenshots
+</div>
 
 ![Bannr screeens](./github/image.png)
 
+<div id=6>
+
 ## 🟦 Architecture
+</div>
 
 The project follows a **clean and modular architecture**, organizing the code into well-defined packages to ensure maintainability, scalability, and readability.
 
@@ -138,7 +156,10 @@ com.progmobile.lembraplus
 **Utils Layer:**
 >Contains helper classes and shared utilities used across the app (e.g., color utilities, route navigation).
 
+<div id=7>
+
 ## 🟦 Developers
+</div>
 
 <table align="center">
   <tr>
