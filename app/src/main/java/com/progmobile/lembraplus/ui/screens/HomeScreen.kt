@@ -1,7 +1,6 @@
 package com.progmobile.lembraplus.ui.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -18,25 +17,26 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -48,6 +48,7 @@ import com.progmobile.lembraplus.ui.components.CategoryCard.CategoryCard
 import com.progmobile.lembraplus.ui.components.CategoryCard.CategoryCardProps
 import com.progmobile.lembraplus.ui.components.NavBar.NavBar
 import com.progmobile.lembraplus.ui.components.NavBar.NavProps
+import com.progmobile.lembraplus.ui.components.SearchTaskModal.SearchTaskModal
 import com.progmobile.lembraplus.ui.components.TaskCard
 import com.progmobile.lembraplus.ui.components.TaskCardProps
 import com.progmobile.lembraplus.ui.vms.CategoryViewModel
@@ -59,6 +60,8 @@ import com.progmobile.lembraplus.utils.Routes
 @Composable
 fun HomeScreen(navController: NavHostController) {
 
+    var showModal by remember { mutableStateOf(false) }
+
     val scrollVertical = rememberScrollState()
     val scrollHorizontal = rememberScrollState()
 
@@ -68,8 +71,15 @@ fun HomeScreen(navController: NavHostController) {
     val taskViewModel: TaskViewModel =
         viewModel(factory = TaskViewModelFactory(taskRepository))
 
-    val tasksWithCategory by taskViewModel.allTasks.collectAsState()
+    val allTasks by taskViewModel.allTasks.collectAsState()
     val tasksFixed by taskViewModel.tasksFixed.collectAsState()
+
+    if (showModal) {
+        SearchTaskModal(
+            onDismiss = { showModal = false },
+            navController = navController
+        )
+    }
 
     Scaffold(
         bottomBar = {
@@ -87,16 +97,34 @@ fun HomeScreen(navController: NavHostController) {
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
             // Header
-            Row(
+            Box (
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 20.dp),
-                horizontalArrangement = Arrangement.Center
             ) {
+                IconButton(
+                    onClick = {
+                        showModal = true
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .background(
+                            color = MaterialTheme.colorScheme.tertiary,
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .width(45.dp)
+                        .height(45.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = "Search",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
                 Image(
                     painter = painterResource(id = R.drawable.logo),
                     contentDescription = "logo App",
                     modifier = Modifier
+                        .align(Alignment.Center)
                         .width(90.dp)
                 )
             }
@@ -143,7 +171,6 @@ fun HomeScreen(navController: NavHostController) {
                             .padding(2.dp),
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        taskViewModel.loadAllFixed()
                         tasksFixed.forEach { task ->
                             TaskCard(
                                 props = TaskCardProps(
@@ -152,24 +179,16 @@ fun HomeScreen(navController: NavHostController) {
                                     description = task.task.description,
                                     categoryName = task.category?.name,
                                     categoryColorHex = task.category?.colorHex,
-                                    createdAt = task.task.createdAt.toString(),
-                                    date = task.task.date?.toString(),
-                                    time = task.task.time?.toString(),
+                                    createdAt = task.task.createdAt,
+                                    date = task.task.date,
+                                    time = task.task.time,
                                     width = 250,
                                     isPinned = true
-                                )
+                                ),
+                                navController = navController
                             )
                         }
                     }
-                    Box(
-                        modifier = Modifier
-                            .matchParentSize()
-                            .fadingEdgeOverlay(
-                                scrollState = scrollVertical,
-                                fadeWidth = 32.dp,
-                                overlayColor = MaterialTheme.colorScheme.background
-                            )
-                    )
                 }
             }
 
@@ -244,14 +263,14 @@ fun HomeScreen(navController: NavHostController) {
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.clickable {
-                            navController.navigate(Routes.SeeAll.createRoute("notes"))
+                            navController.navigate(Routes.SeeAll.createRoute("tasks"))
                         }
                     )
                 }
                 Column(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    tasksWithCategory.take(3).forEach { taskWithCategory ->
+                    allTasks.take(3).forEach { taskWithCategory ->
                         TaskCard(
                             props = TaskCardProps(
                                 id = taskWithCategory.task.id.toString(),
@@ -259,11 +278,12 @@ fun HomeScreen(navController: NavHostController) {
                                 description = taskWithCategory.task.description,
                                 categoryName = taskWithCategory.category?.name,
                                 categoryColorHex = taskWithCategory.category?.colorHex,
-                                createdAt = taskWithCategory.task.createdAt.toString(),
-                                date = taskWithCategory.task.date?.toString(),
-                                time = taskWithCategory.task.time?.toString(),
-                                isPinned = taskWithCategory.task.isFixed
-                            )
+                                isPinned = taskWithCategory.task.isFixed,
+                                createdAt = taskWithCategory.task.createdAt,
+                                date = taskWithCategory.task.date,
+                                time = taskWithCategory.task.time
+                            ),
+                            navController = navController
                         )
                     }
                 }
