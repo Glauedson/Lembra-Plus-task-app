@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.Color
 val LightColorScheme = lightColorScheme(
     primary = Color(0xFF3787EA),           // Primary Color
     secondary = Color(0xFF1666C9),         // Secondary Color
-    tertiary = Color(0xFFCCCCCC),          // Tertiary Color
+    tertiary = Color(0xFFE3E2E2),          // Tertiary Color
     background = Color(0xFFFFFEFE),        // Background Color
     onSurface = Color(0xFF000000),         // Text Color
 )

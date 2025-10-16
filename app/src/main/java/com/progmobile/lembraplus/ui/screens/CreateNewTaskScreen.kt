@@ -198,7 +198,8 @@ fun CreateNewTaskScreen(
         Column(
             modifier = Modifier
                 .padding(pad)
-                .padding(25.dp)
+                .padding(horizontal = 25.dp)
+                .padding(top = 15.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(25.dp)
         ) {

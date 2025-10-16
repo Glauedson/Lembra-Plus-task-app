@@ -106,7 +106,7 @@ fun NavBar(
                 onClick = { props.navController.navigate("createNote") },
                 modifier = Modifier
                     .offset(y = (-23).dp)
-                    .size(80.dp)
+                    .size(61.dp)
                     .background(
                         color = MaterialTheme.colorScheme.primary,
                         shape = RoundedCornerShape(50)

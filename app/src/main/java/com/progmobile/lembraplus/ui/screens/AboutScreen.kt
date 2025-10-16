@@ -46,7 +46,7 @@ fun AboutScreen(navController: NavHostController) {
         Column(
             modifier = Modifier
                 .padding(pad)
-                .padding(start = 25.dp, end = 25.dp)
+                .padding(start = 25.dp, end = 25.dp, top = 15.dp)
                 .fillMaxSize(),
         ) {
             HeaderTitle(

@@ -90,7 +90,7 @@ fun HomeScreen(navController: NavHostController) {
         Column(
             modifier = Modifier
                 .padding(pad)
-                .padding(start = 25.dp, end = 25.dp)
+                .padding(start = 25.dp, end = 25.dp, top = 15.dp)
                 .verticalScroll(scrollHorizontal)
                 .background(MaterialTheme.colorScheme.background)
                 .fillMaxSize(),
@@ -145,6 +145,7 @@ fun HomeScreen(navController: NavHostController) {
 
                     )
 
+
                     Text(
                         "See All",
                         style = MaterialTheme.typography.titleSmall,
@@ -165,7 +166,7 @@ fun HomeScreen(navController: NavHostController) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(130.dp)
+                            //.height(130.dp)
                             .horizontalScroll(scrollVertical)
                             .clip(RoundedCornerShape(10.dp))
                             .padding(2.dp),
@@ -186,6 +187,13 @@ fun HomeScreen(navController: NavHostController) {
                                     isPinned = true
                                 ),
                                 navController = navController
+                            )
+                        }
+
+                        if (tasksFixed.isEmpty()){
+                            Text(
+                                "no favorite notes",
+                                color = MaterialTheme.colorScheme.tertiary
                             )
                         }
                     }
@@ -237,6 +245,13 @@ fun HomeScreen(navController: NavHostController) {
                             )
                         )
                     }
+
+                    if (categories.isEmpty()){
+                        Text(
+                            "no categories notes",
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
                 }
             }
 
@@ -284,6 +299,13 @@ fun HomeScreen(navController: NavHostController) {
                                 time = taskWithCategory.task.time
                             ),
                             navController = navController
+                        )
+                    }
+
+                    if (allTasks.isEmpty()){
+                        Text(
+                            "no notes",
+                            color = MaterialTheme.colorScheme.tertiary
                         )
                     }
                 }

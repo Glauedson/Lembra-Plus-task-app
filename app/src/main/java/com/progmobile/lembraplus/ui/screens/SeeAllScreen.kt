@@ -72,7 +72,7 @@ fun SeeAllScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(start = 25.dp, end = 25.dp),
+                .padding(start = 25.dp, end = 25.dp, top = 15.dp),
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
             HeaderTitle(
