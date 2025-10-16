@@ -5,8 +5,10 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.progmobile.lembraplus.data.db.model.Task
+import com.progmobile.lembraplus.data.db.model.TaskWithCategory
 import java.time.LocalDate
 
 @Dao
@@ -21,13 +23,24 @@ interface TaskDao{
     @Delete
     suspend fun delete(task: Task)
 
+    @Transaction
+    @Query("SELECT * FROM tasks ORDER BY created_at DESC")
+    suspend fun getLatestWithCategory(): List<TaskWithCategory>
+      
+    @Transaction
+    @Query("SELECT * FROM tasks ORDER BY created_at DESC")
+    suspend fun getLatest(): List<TaskWithCategory>
+
     @Query("SELECT * FROM tasks ORDER BY task_date IS NULL, task_date, task_time")
-    suspend fun getAllOrdered(): List<Task>
+    suspend fun getAllOrdered(): List<TaskWithCategory>
 
     @Query("SELECT * FROM tasks WHERE task_date = :date ORDER BY task_time")
-    suspend fun getByDate(date: LocalDate): List<Task>
+    suspend fun getByDate(date: LocalDate): List<TaskWithCategory>
 
     @Query("SELECT * FROM tasks WHERE category_id = :categoryId ORDER BY task_date, task_time")
-    suspend fun getByCategory(categoryId: Int): List<Task>
+    suspend fun getByCategory(categoryId: Int): List<TaskWithCategory>
+
+    @Query("SELECT * FROM tasks WHERE is_fixed = 1 ORDER BY task_date, task_time")
+    suspend fun getAllFixed(): List<TaskWithCategory>
 
 }

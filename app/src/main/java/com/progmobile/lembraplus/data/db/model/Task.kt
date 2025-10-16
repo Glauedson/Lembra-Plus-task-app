@@ -1,11 +1,22 @@
 package com.progmobile.lembraplus.data.db.model
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 import java.time.LocalDate
 import java.time.LocalTime
+
+data class TaskWithCategory(
+    @Embedded val task: Task,
+    @Relation(
+        parentColumn = "category_id",
+        entityColumn = "id"
+    )
+    val category: Category?
+)
 
 @Entity(
     tableName = "tasks",

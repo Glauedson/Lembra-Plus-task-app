@@ -2,6 +2,7 @@ package com.progmobile.lembraplus.data.repository
 
 import com.progmobile.lembraplus.data.db.dao.TaskDao
 import com.progmobile.lembraplus.data.db.model.Task
+import com.progmobile.lembraplus.data.db.model.TaskWithCategory
 import java.sql.Date
 import java.time.LocalDate
 
@@ -13,10 +14,14 @@ open class TaskRepository(private val dao: TaskDao){
 
     suspend fun delete(task: Task) = dao.delete(task)
 
-    open suspend fun getAllOrdered(): List<Task> = dao.getAllOrdered()
+    open suspend fun getAllOrderedByDate(): List<TaskWithCategory> = dao.getAllOrdered()
 
-    suspend fun getByCategory(categoryId: Int): List<Task> = dao.getByCategory(categoryId)
+    suspend fun  getLatest(): List<TaskWithCategory> = dao.getLatest()
 
-    suspend fun getByDate(date: LocalDate): List<Task> = dao.getByDate(date)
+    suspend fun getByCategory(categoryId: Int): List<TaskWithCategory> = dao.getByCategory(categoryId)
+
+    suspend fun getByDate(date: LocalDate): List<TaskWithCategory> = dao.getByDate(date)
+
+    suspend fun getAllFixed(): List<TaskWithCategory> = dao.getAllFixed()
 
 }
