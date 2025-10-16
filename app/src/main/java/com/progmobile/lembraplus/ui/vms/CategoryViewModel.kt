@@ -2,6 +2,7 @@ package com.progmobile.lembraplus.ui.vms
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.progmobile.lembraplus.data.db.dao.CategoryWithTaskCount
 import com.progmobile.lembraplus.data.db.model.Category
 import com.progmobile.lembraplus.data.repository.CategoryRepository
 import com.progmobile.lembraplus.utils.ColorUtils.normalizeHex
@@ -9,17 +10,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class CategoryViewModel(private val repository: CategoryRepository): ViewModel() {
+class CategoryViewModel(private val repository: CategoryRepository) : ViewModel() {
 
-    private val _categories = MutableStateFlow<List<Category>>(emptyList())
-    val categories: StateFlow<List<Category>> = _categories
+    private val _categories = MutableStateFlow<List<CategoryWithTaskCount>>(emptyList())
+    val categories: StateFlow<List<CategoryWithTaskCount>> = _categories
 
     init {
         viewModelScope.launch { loadAll() }
     }
 
-    suspend fun loadAll(){
-        _categories.value = repository.all()
+    suspend fun loadAll() {
+        _categories.value = repository.allWithTaskCount()
     }
 
     fun refresh() = viewModelScope.launch { loadAll() }
@@ -32,8 +33,8 @@ class CategoryViewModel(private val repository: CategoryRepository): ViewModel()
         loadAll()
     }
 
-    fun deleteCategory(category: Category) = viewModelScope.launch {
-        repository.delete(category)
+    fun deleteCategory(categoryWithTaskCount: CategoryWithTaskCount) = viewModelScope.launch {
+        repository.delete(categoryWithTaskCount.category)
         loadAll()
     }
 
