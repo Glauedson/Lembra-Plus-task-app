@@ -1,13 +1,28 @@
 package com.progmobile.lembraplus.ui.screens
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -33,6 +48,8 @@ fun SeeAllScreen(
     type: String
 ) {
 
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    
     val context = LocalContext.current
 
     val taskDao = AppDatabase.getInstance(context).taskDao()
@@ -61,12 +78,17 @@ fun SeeAllScreen(
             HeaderTitle(
                 props = HeaderTitleProps(
                     title = "All ${type}",
-                    onClick = {
+                    backButton = {
                         navController.navigate(Routes.Home.route)
                     }
-                )
+                ),
+                onDeleteClick = { showDeleteDialog = true }
             )
             Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
+                    .padding(top = 2.dp, bottom = 25.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 when (type) {
@@ -79,11 +101,12 @@ fun SeeAllScreen(
                                     description = card.task.description,
                                     categoryName = card.category?.name,
                                     categoryColorHex = card.category?.colorHex,
-                                    createdAt = card.task.createdAt.toString(),
-                                    date = card.task.date?.toString(),
-                                    time = card.task.time?.toString(),
+                                    createdAt = card.task.createdAt,
+                                    date = card.task.date,
+                                    time = card.task.time,
                                     isPinned = true
-                                )
+                                ),
+                                navController = navController
                             )
                         }
                     }
@@ -100,7 +123,7 @@ fun SeeAllScreen(
                         }
                     }
 
-                    "notes" -> {
+                    "tasks" -> {
                         allTasks.forEach { card ->
                             TaskCard(
                                 TaskCardProps(
@@ -109,15 +132,67 @@ fun SeeAllScreen(
                                     description = card.task.description,
                                     categoryName = card.category?.name,
                                     categoryColorHex = card.category?.colorHex,
-                                    createdAt = card.task.createdAt.toString(),
-                                    date = card.task.date?.toString(),
-                                    time = card.task.time?.toString(),
+                                    createdAt = card.task.createdAt,
+                                    date = card.task.date,
+                                    time = card.task.time,
                                     isPinned = card.task.isFixed
-                                )
+                                ),
+                                navController = navController
                             )
                         }
                     }
                 }
+            }
+            
+            if (showDeleteDialog) {
+                AlertDialog(
+                    onDismissRequest = { showDeleteDialog = false },
+                    title = {
+                        Text(
+                            text = "Delete all $type?",
+                            fontWeight = FontWeight.Bold
+                        )
+                    },
+                    text = {
+                        Text("Are you sure you want to delete all $type? This action cannot be undone.")
+                    },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                when(type){
+                                    "favorites" -> {
+                                        tasksFixed.forEach { task ->
+                                            taskViewModel.deleteTask(task.task.id)
+                                        }
+                                    }
+                                    "categories" -> {
+                                        categories.forEach { category ->
+                                            categoryViewModel.deleteCategory(category.category.id)
+                                        }
+                                    }
+                                    "tasks" -> {
+                                        allTasks.forEach { task ->
+                                            taskViewModel.deleteTask(task.task.id)
+                                        }
+                                    }
+                                }
+                                showDeleteDialog = false
+                            },
+                            colors = ButtonDefaults.textButtonColors(
+                                contentColor = Color.Red
+                            )
+                        ) {
+                            Text("Confirm")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = { showDeleteDialog = false }
+                        ) {
+                            Text("Cancel")
+                        }
+                    }
+                )
             }
         }
     }

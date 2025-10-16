@@ -41,6 +41,7 @@ import androidx.compose.material3.TimePickerLayoutType
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -78,6 +79,8 @@ import com.progmobile.lembraplus.ui.vms.CategoryViewModelFactory
 import com.progmobile.lembraplus.ui.vms.TaskViewModel
 import com.progmobile.lembraplus.ui.vms.TaskViewModelFactory
 import com.progmobile.lembraplus.utils.ColorUtils.safeParseColor
+import com.progmobile.lembraplus.utils.Formatters
+import com.progmobile.lembraplus.utils.Formatters.toFormattedDateString
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -89,7 +92,8 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun CreateNewTaskScreen(
     viewModel: TaskViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    taskId: String?
 ) {
     var notetitle by remember { mutableStateOf("") }
     val maxTitle = 50
@@ -116,6 +120,23 @@ fun CreateNewTaskScreen(
 
     val categories by categoryViewModel.categories.collectAsState()
     var selectedCategoryId by remember { mutableStateOf<Int?>(null) }
+    var createdAt by remember { mutableStateOf(System.currentTimeMillis()) }
+
+    val isEditing = taskId != null
+
+    if (isEditing) {
+        LaunchedEffect (key1 = taskId) {
+            viewModel.getTaskById(taskId.toInt())?.let { taskWithCategory ->
+                notetitle = taskWithCategory.task.title
+                description = taskWithCategory.task.description ?: ""
+                isFixed = taskWithCategory.task.isFixed
+                selectedCategoryId = taskWithCategory.task.categoryId
+                date = taskWithCategory.task.date
+                time = taskWithCategory.task.time
+                createdAt = taskWithCategory.task.createdAt
+            }
+        }
+    }
 
     Scaffold(
         bottomBar = {
@@ -135,17 +156,21 @@ fun CreateNewTaskScreen(
                         val descriptionTrimmed = description.trim()
 
                         val task = Task(
-                            id = 0,
+                            id = taskId?.toInt() ?: 0,
                             title = titleTrimmed,
                             description = descriptionTrimmed.ifEmpty { null },
                             categoryId = selectedCategoryId,
                             date = date,
                             time = time,
                             isFixed = isFixed,
-                            createdAt = System.currentTimeMillis()
+                            createdAt = createdAt
                         )
-                        viewModel.addTask(task)
-                        navController.navigate("home")
+                        if (isEditing) {
+                            viewModel.updateTask(task)
+                        } else {
+                            viewModel.addTask(task)
+                        }
+                        navController.navigate("home") { popUpTo("home") { inclusive = true } }
                     },
                     shape = RoundedCornerShape(18.dp),
                     modifier = Modifier
@@ -153,7 +178,8 @@ fun CreateNewTaskScreen(
                         .weight(1f)
                 ) {
                     Text(
-                        "Create Note", style = MaterialTheme.typography.titleSmall
+                        if (isEditing) "Update Note" else "Create Note",
+                        style = MaterialTheme.typography.titleSmall
                     )
                 }
                 Button(
@@ -178,8 +204,8 @@ fun CreateNewTaskScreen(
         ) {
             HeaderTitle(
                 props = HeaderTitleProps(
-                    title = "Create New Note",
-                    onClick = {navController.navigate("home")}
+                    title = if (isEditing) "Edit Note" else "Create New Note",
+                    backButton = { navController.popBackStack() }
                 )
             )
             Column(
@@ -339,8 +365,7 @@ fun CreateNewTaskScreen(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
 
-                        val dateInMillis =
-                            date?.atStartOfDay(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()
+                        val dateInMillis = Formatters.dateInMillis(date)
 
                         CustomDatePicker(
                             selectedDateMillis = dateInMillis,
@@ -457,13 +482,6 @@ fun CustomDatePicker(
     }
 }
 
-fun Long?.toFormattedDateString(): String {
-    val millis = this ?: System.currentTimeMillis()
-    val instant = Instant.ofEpochMilli(millis)
-    val localDate = instant.atZone(ZoneOffset.UTC).toLocalDate()
-    return localDate.format(DateTimeFormatter.ofPattern("dd / MMM / yyyy"))
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerWithDialog(
@@ -545,7 +563,7 @@ fun TimePickerWithDialog(
                                     val selectedTime =
                                         LocalTime.of(timeState.hour, timeState.minute)
                                     timeSelected =
-                                        formattedTime(selectedTime.hour, selectedTime.minute)
+                                        Formatters.formattedTime(selectedTime.hour, selectedTime.minute)
                                     onTimeSelected(selectedTime)
                                     showTimePicker = false
                                 }) {
@@ -559,17 +577,12 @@ fun TimePickerWithDialog(
     }
 }
 
-fun formattedTime(hour: Int, minute: Int): String {
-    val formatter = DateTimeFormatter.ofPattern("HH:mm")
-    val time = LocalTime.of(hour, minute).format(formatter)
-    return time
-}
-
 @Preview(showBackground = false)
 @Composable
 fun CreateNewTaskScreenPreview() {
     CreateNewTaskScreen(
         viewModel = viewModel(),
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        taskId = null
     )
 }

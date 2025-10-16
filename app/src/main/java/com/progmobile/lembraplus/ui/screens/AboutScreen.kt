@@ -52,7 +52,7 @@ fun AboutScreen(navController: NavHostController) {
             HeaderTitle(
                 props = HeaderTitleProps(
                     title = "About",
-                    onClick = {
+                    backButton = {
                         navController.navigate(Routes.Home.route)
                     }
                 )
