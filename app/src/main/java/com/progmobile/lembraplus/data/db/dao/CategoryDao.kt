@@ -29,13 +29,7 @@ interface CategoryDao {
     @Query("SELECT c.*, (SELECT COUNT(*) FROM tasks WHERE tasks.category_id = c.id) as taskCount FROM categories c ORDER BY c.category_name COLLATE NOCASE")
     suspend fun getAllWithTaskCount(): List<CategoryWithTaskCount>
 
-    @Query("SELECT * FROM categories ORDER BY category_name COLLATE NOCASE")
-    suspend fun getAll(): List<Category>
-
     @Query("SELECT * FROM categories WHERE id = :id LIMIT 1")
     suspend fun getById(id: Int): Category?
-
-    @Query("SELECT * FROM categories WHERE category_name LIKE :query ORDER BY category_name")
-    suspend fun searchByName(query: String): List<Category>
 
 }

@@ -239,10 +239,13 @@ fun HomeScreen(navController: NavHostController) {
                     categories.sortedByDescending { it.taskCount }.take(3).forEach { cat ->
                         CategoryCard(
                             props = CategoryCardProps(
+                                id = cat.category.id,
                                 name = cat.category.name,
                                 colorHex = cat.category.colorHex,
                                 quant = cat.taskCount
-                            )
+                            ),
+                            navController = navController,
+                            viewModel = categoryViewModel
                         )
                     }
 
@@ -265,7 +268,7 @@ fun HomeScreen(navController: NavHostController) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        "Latest tasks added",
+                        "Latest notes added",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Medium

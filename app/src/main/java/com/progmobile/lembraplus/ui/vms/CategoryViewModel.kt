@@ -15,6 +15,9 @@ class CategoryViewModel(private val repository: CategoryRepository) : ViewModel(
     private val _categories = MutableStateFlow<List<CategoryWithTaskCount>>(emptyList())
     val categories: StateFlow<List<CategoryWithTaskCount>> = _categories
 
+    private val _category = MutableStateFlow<Category?>(null)
+    val category: StateFlow<Category?> = _category
+
     init {
         viewModelScope.launch { loadAll() }
     }
@@ -23,7 +26,9 @@ class CategoryViewModel(private val repository: CategoryRepository) : ViewModel(
         _categories.value = repository.allWithTaskCount()
     }
 
-    fun refresh() = viewModelScope.launch { loadAll() }
+    suspend fun getById(id: Int){
+        _category.value = repository.getById(id)
+    }
 
     fun saveCategory(name: String, colorHex: String, id: Int) = viewModelScope.launch {
         val normalized = normalizeHex(colorHex)
@@ -43,11 +48,6 @@ class CategoryViewModel(private val repository: CategoryRepository) : ViewModel(
         if (name.isBlank()) return@launch
         val cat = Category(id = id, name = name.trim(), colorHex = normalized)
         repository.update(cat)
-        loadAll()
-    }
-
-    fun searchCategory(query: String) = viewModelScope.launch {
-        repository.search(query)
         loadAll()
     }
 

@@ -15,19 +15,32 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
+import androidx.navigation.NavHostController
+import com.progmobile.lembraplus.ui.components.NewCategoryModal.NewCategoryModal
+import com.progmobile.lembraplus.ui.vms.CategoryViewModel
 import com.progmobile.lembraplus.utils.ColorUtils
 
 @Composable
-fun CategoryCard(props: CategoryCardProps) {
+fun CategoryCard(
+    props: CategoryCardProps,
+    viewModel: CategoryViewModel,
+    navController: NavHostController,
+) {
 
     val categoryColor = ColorUtils.safeParseColor(props.colorHex)
+    var editModal by rememberSaveable { mutableStateOf(false) }
 
     Box (
         modifier = Modifier
@@ -54,7 +67,7 @@ fun CategoryCard(props: CategoryCardProps) {
                     color = categoryColor
                 )
                 Text(
-                    text = "${props.quant} tasks",
+                    text = "${props.quant} notes",
                     color = categoryColor
                 )
             }
@@ -65,13 +78,22 @@ fun CategoryCard(props: CategoryCardProps) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.End
             ) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "Category edit icon",
-                    modifier = Modifier.size(23.dp),
-                    tint = categoryColor
+                NewCategoryModal(
+                    modifier = Modifier,
+                    viewModel = viewModel,
+                    categoryId = props.id,
+                    navController = navController,
+                    categoryColor = props.colorHex
                 )
             }
         }
+    }
+    if (editModal){
+        NewCategoryModal(
+            modifier = Modifier,
+            viewModel = viewModel,
+            categoryId = props.id,
+            navController = navController
+        )
     }
 }

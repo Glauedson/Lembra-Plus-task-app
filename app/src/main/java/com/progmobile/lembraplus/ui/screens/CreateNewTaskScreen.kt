@@ -283,7 +283,7 @@ fun CreateNewTaskScreen(
                             horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             NewCategoryModal(
-                                modifier = Modifier, viewModel = categoryViewModel
+                                modifier = Modifier, viewModel = categoryViewModel, navController = navController
                             )
                             categories.forEach { cat ->
                                 key(cat.category.id) {

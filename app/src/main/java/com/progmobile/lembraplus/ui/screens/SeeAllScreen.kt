@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.progmobile.lembraplus.data.db.AppDatabase
 import com.progmobile.lembraplus.data.repository.CategoryRepository
 import com.progmobile.lembraplus.data.repository.TaskRepository
@@ -44,7 +45,7 @@ import com.progmobile.lembraplus.utils.Routes
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SeeAllScreen(
-    navController: NavController,
+    navController: NavHostController,
     type: String
 ) {
 
@@ -115,10 +116,13 @@ fun SeeAllScreen(
                         categories.sortedByDescending { it.taskCount }.forEach { card ->
                             CategoryCard(
                                 CategoryCardProps(
+                                    id = card.category.id,
                                     name = card.category.name,
                                     colorHex = card.category.colorHex,
                                     quant = card.taskCount
-                                )
+                                ),
+                                navController = navController,
+                                viewModel = categoryViewModel
                             )
                         }
                     }
