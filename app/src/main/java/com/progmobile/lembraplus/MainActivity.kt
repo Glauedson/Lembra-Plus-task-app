@@ -1,6 +1,5 @@
 package com.progmobile.lembraplus
 
-import android.app.StatusBarManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,14 +21,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.progmobile.lembraplus.data.db.AppDatabase
-import com.progmobile.lembraplus.data.repository.TaskRepository
+import com.progmobile.lembraplus.data.repository.NoteRepository
 import com.progmobile.lembraplus.ui.screens.AboutScreen
-import com.progmobile.lembraplus.ui.screens.CreateNewTaskScreen
+import com.progmobile.lembraplus.ui.screens.CreateNewNoteScreen
 import com.progmobile.lembraplus.ui.screens.HomeScreen
 import com.progmobile.lembraplus.ui.screens.SeeAllScreen
 import com.progmobile.lembraplus.ui.theme.LembraPlusTheme
-import com.progmobile.lembraplus.ui.vms.TaskViewModel
-import com.progmobile.lembraplus.ui.vms.TaskViewModelFactory
+import com.progmobile.lembraplus.ui.vms.NoteViewModel
+import com.progmobile.lembraplus.ui.vms.NoteViewModelFactory
 import com.progmobile.lembraplus.utils.Routes
 
 class MainActivity : ComponentActivity() {
@@ -46,9 +45,9 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val context = LocalContext.current
                     val taskDao = AppDatabase.getInstance(context).taskDao()
-                    val taskRepository = remember { TaskRepository(taskDao) }
-                    val taskViewModel: TaskViewModel =
-                        viewModel(factory = TaskViewModelFactory(taskRepository))
+                    val noteRepository = remember { NoteRepository(taskDao) }
+                    val noteViewModel: NoteViewModel =
+                        viewModel(factory = NoteViewModelFactory(noteRepository))
 
                     // Adiciona o Scaffold como layout principal
                     Scaffold(
@@ -72,10 +71,10 @@ class MainActivity : ComponentActivity() {
                                 })
                             ) {
                                 val taskId = it.arguments?.getString("taskId")
-                                CreateNewTaskScreen(
-                                    viewModel = taskViewModel,
+                                CreateNewNoteScreen(
+                                    viewModel = noteViewModel,
                                     navController = navController,
-                                    taskId = taskId
+                                    noteId = taskId
                                 )
                             }
                             composable(

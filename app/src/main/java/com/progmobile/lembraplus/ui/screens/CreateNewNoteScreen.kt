@@ -45,9 +45,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,16 +68,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.progmobile.lembraplus.data.db.AppDatabase
-import com.progmobile.lembraplus.data.db.model.Task
+import com.progmobile.lembraplus.data.db.model.Note
 import com.progmobile.lembraplus.data.repository.CategoryRepository
-import com.progmobile.lembraplus.data.repository.TaskRepository
 import com.progmobile.lembraplus.ui.components.HeaderTitle.HeaderTitle
 import com.progmobile.lembraplus.ui.components.HeaderTitle.HeaderTitleProps
 import com.progmobile.lembraplus.ui.components.NewCategoryModal.NewCategoryModal
 import com.progmobile.lembraplus.ui.vms.CategoryViewModel
 import com.progmobile.lembraplus.ui.vms.CategoryViewModelFactory
-import com.progmobile.lembraplus.ui.vms.TaskViewModel
-import com.progmobile.lembraplus.ui.vms.TaskViewModelFactory
+import com.progmobile.lembraplus.ui.vms.NoteViewModel
 import com.progmobile.lembraplus.utils.ColorUtils.safeParseColor
 import com.progmobile.lembraplus.utils.Formatters
 import com.progmobile.lembraplus.utils.Formatters.toFormattedDateString
@@ -85,26 +83,26 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateNewTaskScreen(
-    viewModel: TaskViewModel,
+fun CreateNewNoteScreen(
+    viewModel: NoteViewModel,
     navController: NavHostController,
-    taskId: String?
+    noteId: String?
 ) {
-    var notetitle by remember { mutableStateOf("") }
+    var noteTitle by remember { mutableStateOf("") }
     val maxTitle = 50
 
-    var description by remember { mutableStateOf("") }
+    var selectedCategoryId by remember { mutableStateOf<Int?>(null) }
+
+    var noteDescription by remember { mutableStateOf("") }
     val maxDescription = 300
 
-    var isFixed by remember { mutableStateOf(false) }
-
-    var date by remember { mutableStateOf<LocalDate?>(null) }
-    var time by remember { mutableStateOf<LocalTime?>(null) }
+    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
+    var selectedTime by remember { mutableStateOf<LocalTime?>(null) }
+    var isPinned by remember { mutableStateOf(false) }
+    var createdAt by remember { mutableLongStateOf(System.currentTimeMillis()) }
 
     var error by remember { mutableStateOf<String?>(null) }
 
@@ -112,28 +110,24 @@ fun CreateNewTaskScreen(
     val mainContentScrollState = rememberScrollState()
 
     val context = LocalContext.current
-
     val categoryDao = AppDatabase.getInstance(context).categoryDao()
     val categoryRepository = remember { CategoryRepository(categoryDao) }
     val categoryViewModel: CategoryViewModel =
         viewModel(factory = CategoryViewModelFactory(categoryRepository))
 
     val categories by categoryViewModel.categories.collectAsState()
-    var selectedCategoryId by remember { mutableStateOf<Int?>(null) }
-    var createdAt by remember { mutableStateOf(System.currentTimeMillis()) }
 
-    val isEditing = taskId != null
-
+    val isEditing = noteId != null
     if (isEditing) {
-        LaunchedEffect (key1 = taskId) {
-            viewModel.getTaskById(taskId.toInt())?.let { taskWithCategory ->
-                notetitle = taskWithCategory.task.title
-                description = taskWithCategory.task.description ?: ""
-                isFixed = taskWithCategory.task.isFixed
-                selectedCategoryId = taskWithCategory.task.categoryId
-                date = taskWithCategory.task.date
-                time = taskWithCategory.task.time
-                createdAt = taskWithCategory.task.createdAt
+        LaunchedEffect(key1 = noteId) {
+            viewModel.getNoteById(noteId.toInt())?.let { noteData ->
+                noteTitle = noteData.note.title
+                noteDescription = noteData.note.description ?: ""
+                isPinned = noteData.note.isPinned
+                selectedCategoryId = noteData.note.categoryId
+                selectedDate = noteData.note.date
+                selectedTime = noteData.note.time
+                createdAt = noteData.note.createdAt
             }
         }
     }
@@ -148,29 +142,34 @@ fun CreateNewTaskScreen(
             ) {
                 Button(
                     onClick = {
-                        val titleTrimmed = notetitle.trim()
+
+                        val titleTrimmed = noteTitle.trim()
                         if (titleTrimmed.isEmpty()) {
                             error = "Inform a title!"
                             return@Button
                         }
-                        val descriptionTrimmed = description.trim()
 
-                        val task = Task(
-                            id = taskId?.toInt() ?: 0,
+                        val descriptionTrimmed = noteDescription.trim()
+
+                        val note = Note(
+                            id = noteId?.toInt() ?: 0,
                             title = titleTrimmed,
                             description = descriptionTrimmed.ifEmpty { null },
                             categoryId = selectedCategoryId,
-                            date = date,
-                            time = time,
-                            isFixed = isFixed,
+                            date = selectedDate,
+                            time = selectedTime,
+                            isPinned = isPinned,
                             createdAt = createdAt
                         )
+
                         if (isEditing) {
-                            viewModel.updateTask(task)
+                            viewModel.updateNote(note)
                         } else {
-                            viewModel.addTask(task)
+                            viewModel.saveNote(note)
                         }
+
                         navController.navigate("home") { popUpTo("home") { inclusive = true } }
+
                     },
                     shape = RoundedCornerShape(18.dp),
                     modifier = Modifier
@@ -183,14 +182,14 @@ fun CreateNewTaskScreen(
                     )
                 }
                 Button(
-                    onClick = { isFixed = !isFixed },
+                    onClick = { isPinned = !isPinned },
                     shape = RoundedCornerShape(18.dp),
                     modifier = Modifier.height(50.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Star,
                         contentDescription = null,
-                        tint = if (isFixed) Color.Yellow else MaterialTheme.colorScheme.onPrimary
+                        tint = if (isPinned) Color.Yellow else MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
@@ -225,12 +224,12 @@ fun CreateNewTaskScreen(
                         style = MaterialTheme.typography.titleMedium
                     )
                     OutlinedTextField(
-                        value = notetitle,
+                        value = noteTitle,
                         onValueChange = { digited ->
                             if (digited.length <= maxTitle) {
-                                notetitle = digited
+                                noteTitle = digited
                             }
-                            if (notetitle.isNotBlank()) error = null
+                            if (noteTitle.isNotBlank()) error = null
                         },
                         shape = RoundedCornerShape(10.dp),
                         placeholder = {
@@ -254,7 +253,7 @@ fun CreateNewTaskScreen(
                             )
                         }
                         Text(
-                            "${notetitle.length} / $maxTitle",
+                            "${noteTitle.length} / $maxTitle",
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.outline
                         )
@@ -283,7 +282,9 @@ fun CreateNewTaskScreen(
                             horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             NewCategoryModal(
-                                modifier = Modifier, viewModel = categoryViewModel, navController = navController
+                                modifier = Modifier,
+                                viewModel = categoryViewModel,
+                                navController = navController
                             )
                             categories.forEach { cat ->
                                 key(cat.category.id) {
@@ -291,7 +292,8 @@ fun CreateNewTaskScreen(
                                     val isSelected = cat.category.id == selectedCategoryId
                                     OutlinedButton(
                                         onClick = {
-                                            selectedCategoryId = if (isSelected) null else cat.category.id
+                                            selectedCategoryId =
+                                                if (isSelected) null else cat.category.id
                                         },
                                         colors = ButtonDefaults.outlinedButtonColors(
                                             containerColor = if (isSelected) buttonColor else buttonColor.copy(
@@ -329,9 +331,9 @@ fun CreateNewTaskScreen(
                         style = MaterialTheme.typography.titleMedium
                     )
                     OutlinedTextField(
-                        value = description, onValueChange = { digited ->
+                        value = noteDescription, onValueChange = { digited ->
                             if (digited.length <= maxDescription) {
-                                description = digited
+                                noteDescription = digited
                             }
                         }, shape = RoundedCornerShape(10.dp), placeholder = {
                             Text(
@@ -346,7 +348,7 @@ fun CreateNewTaskScreen(
                         modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End
                     ) {
                         Text(
-                            "${description.length} / $maxDescription",
+                            "${noteDescription.length} / $maxDescription",
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.outline,
                             textAlign = TextAlign.End,
@@ -366,19 +368,19 @@ fun CreateNewTaskScreen(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
 
-                        val dateInMillis = Formatters.dateInMillis(date)
+                        val dateInMillis = Formatters.dateInMillis(selectedDate)
 
                         CustomDatePicker(
                             selectedDateMillis = dateInMillis,
                             onDateSelected = { millis ->
-                                date = millis?.let {
+                                selectedDate = millis?.let {
                                     Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault())
                                         .toLocalDate()
                                 }
                             })
                         TimePickerWithDialog(
                             modifier = Modifier.weight(1f),
-                            onTimeSelected = { selected -> time = selected }
+                            onTimeSelected = { selected -> selectedTime = selected }
                         )
                     }
                 }
@@ -422,7 +424,7 @@ fun Modifier.fadingEdgeOverlay(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomDatePicker(
-    modifier: Modifier = Modifier, selectedDateMillis: Long?, onDateSelected: (Long?) -> Unit
+    selectedDateMillis: Long?, onDateSelected: (Long?) -> Unit
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     val state = rememberDatePickerState(
@@ -564,7 +566,10 @@ fun TimePickerWithDialog(
                                     val selectedTime =
                                         LocalTime.of(timeState.hour, timeState.minute)
                                     timeSelected =
-                                        Formatters.formattedTime(selectedTime.hour, selectedTime.minute)
+                                        Formatters.formattedTime(
+                                            selectedTime.hour,
+                                            selectedTime.minute
+                                        )
                                     onTimeSelected(selectedTime)
                                     showTimePicker = false
                                 }) {
@@ -581,9 +586,9 @@ fun TimePickerWithDialog(
 @Preview(showBackground = false)
 @Composable
 fun CreateNewTaskScreenPreview() {
-    CreateNewTaskScreen(
+    CreateNewNoteScreen(
         viewModel = viewModel(),
         navController = rememberNavController(),
-        taskId = null
+        noteId = null
     )
 }

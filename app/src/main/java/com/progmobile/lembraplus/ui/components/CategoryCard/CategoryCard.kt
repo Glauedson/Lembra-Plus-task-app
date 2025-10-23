@@ -2,6 +2,7 @@ package com.progmobile.lembraplus.ui.components.CategoryCard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,7 @@ import androidx.navigation.NavHostController
 import com.progmobile.lembraplus.ui.components.NewCategoryModal.NewCategoryModal
 import com.progmobile.lembraplus.ui.vms.CategoryViewModel
 import com.progmobile.lembraplus.utils.ColorUtils
+import com.progmobile.lembraplus.utils.Routes
 
 @Composable
 fun CategoryCard(

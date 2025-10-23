@@ -46,9 +46,9 @@ import androidx.core.graphics.toColorInt
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.progmobile.lembraplus.data.db.AppDatabase
-import com.progmobile.lembraplus.data.repository.TaskRepository
-import com.progmobile.lembraplus.ui.vms.TaskViewModel
-import com.progmobile.lembraplus.ui.vms.TaskViewModelFactory
+import com.progmobile.lembraplus.data.repository.NoteRepository
+import com.progmobile.lembraplus.ui.vms.NoteViewModel
+import com.progmobile.lembraplus.ui.vms.NoteViewModelFactory
 import com.progmobile.lembraplus.utils.Formatters
 import com.progmobile.lembraplus.utils.Formatters.toFormattedDateString
 import java.time.LocalDate
@@ -79,9 +79,9 @@ fun TaskViewModal(
 
     val context = LocalContext.current
     val taskDao = AppDatabase.getInstance(context).taskDao()
-    val taskRepository = remember { TaskRepository(taskDao) }
-    val taskViewModel: TaskViewModel =
-        viewModel(factory = TaskViewModelFactory(taskRepository))
+    val noteRepository = remember { NoteRepository(taskDao) }
+    val noteViewModel: NoteViewModel =
+        viewModel(factory = NoteViewModelFactory(noteRepository))
 
 
     Dialog(
@@ -158,7 +158,7 @@ fun TaskViewModal(
                             ) {
                                 Icon(
                                     imageVector = Icons.Filled.Star,
-                                    contentDescription = "Task pinada",
+                                    contentDescription = "Note pinada",
                                     modifier = Modifier.size(15.dp),
                                     tint = Color.White
                                 )
@@ -307,12 +307,12 @@ fun TaskViewModal(
             onDismissRequest = { showDeleteDialog = false },
             title = {
                 Text(
-                    text = "Delete task?",
+                    text = "Delete note?",
                     fontWeight = FontWeight.Bold
                 )
             },
             text = {
-                Text("Are you sure you want to delete this task? This action cannot be undone.")
+                Text("Are you sure you want to delete this note? This action cannot be undone.")
             },
             confirmButton = {
                 TextButton(
@@ -320,7 +320,7 @@ fun TaskViewModal(
                         showDeleteDialog = false
                         onDismiss()
 
-                        taskViewModel.deleteTask(task.id.toInt())
+                        noteViewModel.deleteNote(task.id.toInt())
                     },
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = Color.Red

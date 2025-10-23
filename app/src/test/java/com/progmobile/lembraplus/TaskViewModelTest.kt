@@ -1,8 +1,8 @@
 package com.progmobile.lembraplus
 
-import com.progmobile.lembraplus.data.db.model.Task
-import com.progmobile.lembraplus.data.repository.TaskRepository
-import com.progmobile.lembraplus.ui.vms.TaskViewModel
+import com.progmobile.lembraplus.data.db.model.Note
+import com.progmobile.lembraplus.data.repository.NoteRepository
+import com.progmobile.lembraplus.ui.vms.NoteViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -34,7 +34,7 @@ class TaskViewModelTest {
 
     @Test
     fun loadAll_updatesStateFlow() = runTest {
-        val t1 = Task(
+        val t1 = Note(
             id = 1,
             title = "X",
             description = null,
@@ -43,11 +43,11 @@ class TaskViewModelTest {
             time = LocalTime.of(12, 0)
         )
 
-        val fakeRepo = object : TaskRepository(FakeTaskDao()) {
-            override suspend fun getAllOrdered(): List<Task> = listOf(t1)
+        val fakeRepo = object : NoteRepository(FakeNoteDao()) {
+            override suspend fun getAllOrdered(): List<Note> = listOf(t1)
         }
 
-        val vm = TaskViewModel(fakeRepo)
+        val vm = NoteViewModel(fakeRepo)
         vm.loadAll()
 
         advanceUntilIdle()

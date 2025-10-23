@@ -32,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -43,7 +42,7 @@ import androidx.navigation.NavHostController
 import com.progmobile.lembraplus.R
 import com.progmobile.lembraplus.data.db.AppDatabase
 import com.progmobile.lembraplus.data.repository.CategoryRepository
-import com.progmobile.lembraplus.data.repository.TaskRepository
+import com.progmobile.lembraplus.data.repository.NoteRepository
 import com.progmobile.lembraplus.ui.components.CategoryCard.CategoryCard
 import com.progmobile.lembraplus.ui.components.CategoryCard.CategoryCardProps
 import com.progmobile.lembraplus.ui.components.NavBar.NavBar
@@ -53,8 +52,8 @@ import com.progmobile.lembraplus.ui.components.TaskCard
 import com.progmobile.lembraplus.ui.components.TaskCardProps
 import com.progmobile.lembraplus.ui.vms.CategoryViewModel
 import com.progmobile.lembraplus.ui.vms.CategoryViewModelFactory
-import com.progmobile.lembraplus.ui.vms.TaskViewModel
-import com.progmobile.lembraplus.ui.vms.TaskViewModelFactory
+import com.progmobile.lembraplus.ui.vms.NoteViewModel
+import com.progmobile.lembraplus.ui.vms.NoteViewModelFactory
 import com.progmobile.lembraplus.utils.Routes
 
 @Composable
@@ -67,12 +66,12 @@ fun HomeScreen(navController: NavHostController) {
 
     val context = LocalContext.current
     val taskDao = AppDatabase.getInstance(context).taskDao()
-    val taskRepository = remember { TaskRepository(taskDao) }
-    val taskViewModel: TaskViewModel =
-        viewModel(factory = TaskViewModelFactory(taskRepository))
+    val noteRepository = remember { NoteRepository(taskDao) }
+    val noteViewModel: NoteViewModel =
+        viewModel(factory = NoteViewModelFactory(noteRepository))
 
-    val allTasks by taskViewModel.allTasks.collectAsState()
-    val tasksFixed by taskViewModel.tasksFixed.collectAsState()
+    val allTasks by noteViewModel.allNotes.collectAsState()
+    val tasksFixed by noteViewModel.pinnedNotes.collectAsState()
 
     if (showModal) {
         SearchTaskModal(
@@ -175,14 +174,14 @@ fun HomeScreen(navController: NavHostController) {
                         tasksFixed.forEach { task ->
                             TaskCard(
                                 props = TaskCardProps(
-                                    id = task.task.id.toString(),
-                                    title = task.task.title,
-                                    description = task.task.description,
+                                    id = task.note.id.toString(),
+                                    title = task.note.title,
+                                    description = task.note.description,
                                     categoryName = task.category?.name,
                                     categoryColorHex = task.category?.colorHex,
-                                    createdAt = task.task.createdAt,
-                                    date = task.task.date,
-                                    time = task.task.time,
+                                    createdAt = task.note.createdAt,
+                                    date = task.note.date,
+                                    time = task.note.time,
                                     width = 250,
                                     isPinned = true
                                 ),
@@ -291,15 +290,15 @@ fun HomeScreen(navController: NavHostController) {
                     allTasks.take(3).forEach { taskWithCategory ->
                         TaskCard(
                             props = TaskCardProps(
-                                id = taskWithCategory.task.id.toString(),
-                                title = taskWithCategory.task.title,
-                                description = taskWithCategory.task.description,
+                                id = taskWithCategory.note.id.toString(),
+                                title = taskWithCategory.note.title,
+                                description = taskWithCategory.note.description,
                                 categoryName = taskWithCategory.category?.name,
                                 categoryColorHex = taskWithCategory.category?.colorHex,
-                                isPinned = taskWithCategory.task.isFixed,
-                                createdAt = taskWithCategory.task.createdAt,
-                                date = taskWithCategory.task.date,
-                                time = taskWithCategory.task.time
+                                isPinned = taskWithCategory.note.isPinned,
+                                createdAt = taskWithCategory.note.createdAt,
+                                date = taskWithCategory.note.date,
+                                time = taskWithCategory.note.time
                             ),
                             navController = navController
                         )

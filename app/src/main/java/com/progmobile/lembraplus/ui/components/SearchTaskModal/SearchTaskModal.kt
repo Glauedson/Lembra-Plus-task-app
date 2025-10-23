@@ -28,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -37,11 +36,11 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.progmobile.lembraplus.data.db.AppDatabase
-import com.progmobile.lembraplus.data.repository.TaskRepository
+import com.progmobile.lembraplus.data.repository.NoteRepository
 import com.progmobile.lembraplus.ui.components.TaskCard
 import com.progmobile.lembraplus.ui.components.TaskCardProps
-import com.progmobile.lembraplus.ui.vms.TaskViewModel
-import com.progmobile.lembraplus.ui.vms.TaskViewModelFactory
+import com.progmobile.lembraplus.ui.vms.NoteViewModel
+import com.progmobile.lembraplus.ui.vms.NoteViewModelFactory
 
 @Composable
 fun SearchTaskModal(
@@ -51,10 +50,10 @@ fun SearchTaskModal(
 
     val context = LocalContext.current
     val taskDao = AppDatabase.getInstance(context).taskDao()
-    val taskRepository = remember { TaskRepository(taskDao) }
-    val taskViewModel: TaskViewModel =
-        viewModel(factory = TaskViewModelFactory(taskRepository))
-    val searchResults by taskViewModel.searchResults.collectAsState()
+    val noteRepository = remember { NoteRepository(taskDao) }
+    val noteViewModel: NoteViewModel =
+        viewModel(factory = NoteViewModelFactory(noteRepository))
+    val searchResults by noteViewModel.searchResults.collectAsState()
 
     var isTextFieldFocused by remember { mutableStateOf(false) }
 
@@ -92,7 +91,7 @@ fun SearchTaskModal(
                     value = search,
                     onValueChange = {
                         search = it
-                        taskViewModel.searchTasks(it)
+                        noteViewModel.searchNotes(it)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -120,15 +119,15 @@ fun SearchTaskModal(
                     searchResults.forEach { card ->
                         TaskCard(
                             TaskCardProps(
-                                title = card.task.title,
-                                description = card.task.description,
+                                title = card.note.title,
+                                description = card.note.description,
                                 categoryName = card.category?.name,
                                 categoryColorHex = card.category?.colorHex,
-                                isPinned = card.task.isFixed,
-                                id = card.task.id.toString(),
-                                createdAt = card.task.createdAt,
-                                date = card.task.date,
-                                time = card.task.time
+                                isPinned = card.note.isPinned,
+                                id = card.note.id.toString(),
+                                createdAt = card.note.createdAt,
+                                date = card.note.date,
+                                time = card.note.time
                             ),
                             navController = navController
                         )

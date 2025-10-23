@@ -8,8 +8,8 @@
 ![Versão](https://img.shields.io/badge/version-1.5.0-blue)
 ![Android](https://img.shields.io/badge/device-Android-blue)
 
-![Licença](https://img.shields.io/github/license/glauedson/Lembra-Plus-task-app)
-![Linguagem](https://img.shields.io/github/languages/top/glauedson/Lembra-Plus-task-app)
+![Licença](https://img.shields.io/github/license/glauedson/Lembra-Plus-note-app)
+![Linguagem](https://img.shields.io/github/languages/top/glauedson/Lembra-Plus-note-app)
 
 
 
@@ -74,7 +74,7 @@ To run the project locally, follow the steps below:
  1. **Clone this repository**
 
     ```bash
-    git clone https://github.com/Glauedson/Lembra-Plus-task-app.git
+    git clone https://github.com/Glauedson/Lembra-Plus-note-app.git
     ```
 
   2. **Open the project in Android Studio**

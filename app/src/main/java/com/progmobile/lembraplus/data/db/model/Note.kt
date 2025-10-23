@@ -9,8 +9,8 @@ import androidx.room.Relation
 import java.time.LocalDate
 import java.time.LocalTime
 
-data class TaskWithCategory(
-    @Embedded val task: Task,
+data class NoteWithCategory(
+    @Embedded val note: Note,
     @Relation(
         parentColumn = "category_id",
         entityColumn = "id"
@@ -19,7 +19,7 @@ data class TaskWithCategory(
 )
 
 @Entity(
-    tableName = "tasks",
+    tableName = "notes",
     foreignKeys = [
         ForeignKey(
             entity = Category::class,
@@ -29,13 +29,13 @@ data class TaskWithCategory(
         )
     ]
 )
-data class Task(
+data class Note(
     @PrimaryKey(autoGenerate = true) val id: Int,
-    @ColumnInfo("task_tile") val title: String,
-    @ColumnInfo("task_description") val description: String? = null,
+    @ColumnInfo("note_title") val title: String,
+    @ColumnInfo("note_description") val description: String? = null,
     @ColumnInfo("category_id") val categoryId: Int? = null,
-    @ColumnInfo("task_date") val date: LocalDate? = null,
-    @ColumnInfo("task_time") val time: LocalTime? = null,
-    @ColumnInfo("is_fixed") val isFixed: Boolean = false,
+    @ColumnInfo("note_date") val date: LocalDate? = null,
+    @ColumnInfo("note_time") val time: LocalTime? = null,
+    @ColumnInfo("is_pinned") val isPinned: Boolean = false,
     @ColumnInfo("created_at") val createdAt: Long = System.currentTimeMillis()
 )

@@ -2,16 +2,16 @@ package com.progmobile.lembraplus.ui.vms
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.progmobile.lembraplus.data.repository.TaskRepository
+import com.progmobile.lembraplus.data.repository.NoteRepository
 
-class TaskViewModelFactory(
-    private val repo: TaskRepository
-): ViewModelProvider.Factory {
+class NoteViewModelFactory(
+    private val repo: NoteRepository
+) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(TaskViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(NoteViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return TaskViewModel(repo) as T
+            return NoteViewModel(repo) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

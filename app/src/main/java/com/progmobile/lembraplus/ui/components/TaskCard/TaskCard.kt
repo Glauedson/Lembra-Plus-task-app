@@ -101,7 +101,7 @@ fun TaskCard(props: TaskCardProps, navController: NavController) {
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Star,
-                            contentDescription = "Task pinada",
+                            contentDescription = "Note pinada",
                             modifier = Modifier.size(15.dp),
                             tint = Color.White
                         )

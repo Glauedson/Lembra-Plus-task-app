@@ -25,11 +25,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.progmobile.lembraplus.data.db.AppDatabase
 import com.progmobile.lembraplus.data.repository.CategoryRepository
-import com.progmobile.lembraplus.data.repository.TaskRepository
+import com.progmobile.lembraplus.data.repository.NoteRepository
 import com.progmobile.lembraplus.ui.components.CategoryCard.CategoryCard
 import com.progmobile.lembraplus.ui.components.CategoryCard.CategoryCardProps
 import com.progmobile.lembraplus.ui.components.HeaderTitle.HeaderTitle
@@ -38,8 +37,8 @@ import com.progmobile.lembraplus.ui.components.TaskCard
 import com.progmobile.lembraplus.ui.components.TaskCardProps
 import com.progmobile.lembraplus.ui.vms.CategoryViewModel
 import com.progmobile.lembraplus.ui.vms.CategoryViewModelFactory
-import com.progmobile.lembraplus.ui.vms.TaskViewModel
-import com.progmobile.lembraplus.ui.vms.TaskViewModelFactory
+import com.progmobile.lembraplus.ui.vms.NoteViewModel
+import com.progmobile.lembraplus.ui.vms.NoteViewModelFactory
 import com.progmobile.lembraplus.utils.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,12 +53,12 @@ fun SeeAllScreen(
     val context = LocalContext.current
 
     val taskDao = AppDatabase.getInstance(context).taskDao()
-    val taskRepository = remember { TaskRepository(taskDao) }
-    val taskViewModel: TaskViewModel =
-        viewModel(factory = TaskViewModelFactory(taskRepository))
+    val noteRepository = remember { NoteRepository(taskDao) }
+    val noteViewModel: NoteViewModel =
+        viewModel(factory = NoteViewModelFactory(noteRepository))
 
-    val allTasks by taskViewModel.allTasks.collectAsState()
-    val tasksFixed by taskViewModel.tasksFixed.collectAsState()
+    val allTasks by noteViewModel.allNotes.collectAsState()
+    val tasksFixed by noteViewModel.pinnedNotes.collectAsState()
 
     val categoryDao = AppDatabase.getInstance(context).categoryDao()
     val categoryRepository = remember { CategoryRepository(categoryDao) }
@@ -97,14 +96,14 @@ fun SeeAllScreen(
                         tasksFixed.forEach { card ->
                             TaskCard(
                                 TaskCardProps(
-                                    id = card.task.id.toString(),
-                                    title = card.task.title,
-                                    description = card.task.description,
+                                    id = card.note.id.toString(),
+                                    title = card.note.title,
+                                    description = card.note.description,
                                     categoryName = card.category?.name,
                                     categoryColorHex = card.category?.colorHex,
-                                    createdAt = card.task.createdAt,
-                                    date = card.task.date,
-                                    time = card.task.time,
+                                    createdAt = card.note.createdAt,
+                                    date = card.note.date,
+                                    time = card.note.time,
                                     isPinned = true
                                 ),
                                 navController = navController
@@ -131,15 +130,15 @@ fun SeeAllScreen(
                         allTasks.forEach { card ->
                             TaskCard(
                                 TaskCardProps(
-                                    id = card.task.id.toString(),
-                                    title = card.task.title,
-                                    description = card.task.description,
+                                    id = card.note.id.toString(),
+                                    title = card.note.title,
+                                    description = card.note.description,
                                     categoryName = card.category?.name,
                                     categoryColorHex = card.category?.colorHex,
-                                    createdAt = card.task.createdAt,
-                                    date = card.task.date,
-                                    time = card.task.time,
-                                    isPinned = card.task.isFixed
+                                    createdAt = card.note.createdAt,
+                                    date = card.note.date,
+                                    time = card.note.time,
+                                    isPinned = card.note.isPinned
                                 ),
                                 navController = navController
                             )
@@ -166,7 +165,7 @@ fun SeeAllScreen(
                                 when(type){
                                     "favorites" -> {
                                         tasksFixed.forEach { task ->
-                                            taskViewModel.deleteTask(task.task.id)
+                                            noteViewModel.deleteNote(task.note.id)
                                         }
                                     }
                                     "categories" -> {
@@ -176,8 +175,11 @@ fun SeeAllScreen(
                                     }
                                     "tasks" -> {
                                         allTasks.forEach { task ->
-                                            taskViewModel.deleteTask(task.task.id)
+                                            noteViewModel.deleteNote(task.note.id)
                                         }
+                                    }
+                                    "category" -> {
+
                                     }
                                 }
                                 showDeleteDialog = false

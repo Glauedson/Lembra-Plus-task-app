@@ -1,7 +1,6 @@
 package com.progmobile.lembraplus.data.db.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Embedded
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -26,7 +25,7 @@ interface CategoryDao {
     @Query("DELETE FROM categories WHERE id = :id")
     suspend fun delete(id: Int)
 
-    @Query("SELECT c.*, (SELECT COUNT(*) FROM tasks WHERE tasks.category_id = c.id) as taskCount FROM categories c ORDER BY c.category_name COLLATE NOCASE")
+    @Query("SELECT c.*, (SELECT COUNT(*) FROM notes WHERE notes.category_id = c.id) as taskCount FROM categories c ORDER BY c.category_name COLLATE NOCASE")
     suspend fun getAllWithTaskCount(): List<CategoryWithTaskCount>
 
     @Query("SELECT * FROM categories WHERE id = :id LIMIT 1")
