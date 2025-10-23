@@ -44,8 +44,8 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
                     val context = LocalContext.current
-                    val taskDao = AppDatabase.getInstance(context).taskDao()
-                    val noteRepository = remember { NoteRepository(taskDao) }
+                    val noteDao = AppDatabase.getInstance(context).noteDao()
+                    val noteRepository = remember { NoteRepository(noteDao) }
                     val noteViewModel: NoteViewModel =
                         viewModel(factory = NoteViewModelFactory(noteRepository))
 
@@ -65,16 +65,16 @@ class MainActivity : ComponentActivity() {
                                 AboutScreen(navController = navController)
                             }
                             composable(
-                                route = "createNote?taskId={taskId}",
-                                arguments = listOf(navArgument("taskId") {
+                                route = "createNote?noteId={noteId}",
+                                arguments = listOf(navArgument("noteId") {
                                     type = NavType.StringType; nullable = true
                                 })
                             ) {
-                                val taskId = it.arguments?.getString("taskId")
+                                val noteId = it.arguments?.getString("noteId")
                                 CreateNewNoteScreen(
                                     viewModel = noteViewModel,
                                     navController = navController,
-                                    noteId = taskId
+                                    noteId = noteId
                                 )
                             }
                             composable(

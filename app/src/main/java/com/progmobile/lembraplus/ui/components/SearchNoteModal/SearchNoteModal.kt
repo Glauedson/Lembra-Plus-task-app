@@ -1,4 +1,4 @@
-package com.progmobile.lembraplus.ui.components.SearchTaskModal
+package com.progmobile.lembraplus.ui.components.SearchNoteModal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,22 +37,21 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.progmobile.lembraplus.data.db.AppDatabase
 import com.progmobile.lembraplus.data.repository.NoteRepository
-import com.progmobile.lembraplus.ui.components.TaskCard
-import com.progmobile.lembraplus.ui.components.TaskCardProps
+import com.progmobile.lembraplus.ui.components.NoteCard
+import com.progmobile.lembraplus.ui.components.NoteCardProp
 import com.progmobile.lembraplus.ui.vms.NoteViewModel
 import com.progmobile.lembraplus.ui.vms.NoteViewModelFactory
 
 @Composable
-fun SearchTaskModal(
+fun SearchNoteModal(
     onDismiss: () -> Unit,
     navController: NavController
 ) {
 
     val context = LocalContext.current
-    val taskDao = AppDatabase.getInstance(context).taskDao()
-    val noteRepository = remember { NoteRepository(taskDao) }
-    val noteViewModel: NoteViewModel =
-        viewModel(factory = NoteViewModelFactory(noteRepository))
+    val noteDao = AppDatabase.getInstance(context).noteDao()
+    val noteRepository = remember { NoteRepository(noteDao) }
+    val noteViewModel: NoteViewModel = viewModel(factory = NoteViewModelFactory(noteRepository))
     val searchResults by noteViewModel.searchResults.collectAsState()
 
     var isTextFieldFocused by remember { mutableStateOf(false) }
@@ -117,8 +116,8 @@ fun SearchTaskModal(
                 )
                 {
                     searchResults.forEach { card ->
-                        TaskCard(
-                            TaskCardProps(
+                        NoteCard(
+                            NoteCardProp(
                                 title = card.note.title,
                                 description = card.note.description,
                                 categoryName = card.category?.name,

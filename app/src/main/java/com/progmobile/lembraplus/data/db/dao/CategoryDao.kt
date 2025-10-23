@@ -8,9 +8,9 @@ import androidx.room.Query
 import androidx.room.Update
 import com.progmobile.lembraplus.data.db.model.Category
 
-data class CategoryWithTaskCount(
+data class CategoryWithNoteCount(
     @Embedded val category: Category,
-    val taskCount: Int
+    val noteCount: Int
 )
 
 @Dao
@@ -26,7 +26,7 @@ interface CategoryDao {
     suspend fun delete(id: Int)
 
     @Query("SELECT c.*, (SELECT COUNT(*) FROM notes WHERE notes.category_id = c.id) as taskCount FROM categories c ORDER BY c.category_name COLLATE NOCASE")
-    suspend fun getAllWithTaskCount(): List<CategoryWithTaskCount>
+    suspend fun getAllWithNoteCount(): List<CategoryWithNoteCount>
 
     @Query("SELECT * FROM categories WHERE id = :id LIMIT 1")
     suspend fun getById(id: Int): Category?

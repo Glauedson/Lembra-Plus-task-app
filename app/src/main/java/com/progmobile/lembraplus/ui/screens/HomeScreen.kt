@@ -47,9 +47,9 @@ import com.progmobile.lembraplus.ui.components.CategoryCard.CategoryCard
 import com.progmobile.lembraplus.ui.components.CategoryCard.CategoryCardProps
 import com.progmobile.lembraplus.ui.components.NavBar.NavBar
 import com.progmobile.lembraplus.ui.components.NavBar.NavProps
-import com.progmobile.lembraplus.ui.components.SearchTaskModal.SearchTaskModal
-import com.progmobile.lembraplus.ui.components.TaskCard
-import com.progmobile.lembraplus.ui.components.TaskCardProps
+import com.progmobile.lembraplus.ui.components.SearchNoteModal.SearchNoteModal
+import com.progmobile.lembraplus.ui.components.NoteCard
+import com.progmobile.lembraplus.ui.components.NoteCardProp
 import com.progmobile.lembraplus.ui.vms.CategoryViewModel
 import com.progmobile.lembraplus.ui.vms.CategoryViewModelFactory
 import com.progmobile.lembraplus.ui.vms.NoteViewModel
@@ -65,7 +65,7 @@ fun HomeScreen(navController: NavHostController) {
     val scrollHorizontal = rememberScrollState()
 
     val context = LocalContext.current
-    val taskDao = AppDatabase.getInstance(context).taskDao()
+    val taskDao = AppDatabase.getInstance(context).noteDao()
     val noteRepository = remember { NoteRepository(taskDao) }
     val noteViewModel: NoteViewModel =
         viewModel(factory = NoteViewModelFactory(noteRepository))
@@ -74,7 +74,7 @@ fun HomeScreen(navController: NavHostController) {
     val tasksFixed by noteViewModel.pinnedNotes.collectAsState()
 
     if (showModal) {
-        SearchTaskModal(
+        SearchNoteModal(
             onDismiss = { showModal = false },
             navController = navController
         )
@@ -172,8 +172,8 @@ fun HomeScreen(navController: NavHostController) {
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         tasksFixed.forEach { task ->
-                            TaskCard(
-                                props = TaskCardProps(
+                            NoteCard(
+                                props = NoteCardProp(
                                     id = task.note.id.toString(),
                                     title = task.note.title,
                                     description = task.note.description,
@@ -235,13 +235,13 @@ fun HomeScreen(navController: NavHostController) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    categories.sortedByDescending { it.taskCount }.take(3).forEach { cat ->
+                    categories.sortedByDescending { it.noteCount }.take(3).forEach { cat ->
                         CategoryCard(
                             props = CategoryCardProps(
                                 id = cat.category.id,
                                 name = cat.category.name,
                                 colorHex = cat.category.colorHex,
-                                quant = cat.taskCount
+                                quant = cat.noteCount
                             ),
                             navController = navController,
                             viewModel = categoryViewModel
@@ -288,8 +288,8 @@ fun HomeScreen(navController: NavHostController) {
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     allTasks.take(3).forEach { taskWithCategory ->
-                        TaskCard(
-                            props = TaskCardProps(
+                        NoteCard(
+                            props = NoteCardProp(
                                 id = taskWithCategory.note.id.toString(),
                                 title = taskWithCategory.note.title,
                                 description = taskWithCategory.note.description,

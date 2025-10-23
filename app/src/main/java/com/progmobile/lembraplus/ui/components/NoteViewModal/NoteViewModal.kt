@@ -54,7 +54,7 @@ import com.progmobile.lembraplus.utils.Formatters.toFormattedDateString
 import java.time.LocalDate
 import java.time.LocalTime
 
-data class TaskModalData(
+data class NoteModalData(
     val id: String,
     val title: String,
     val description: String?,
@@ -67,21 +67,20 @@ data class TaskModalData(
 )
 
 @Composable
-fun TaskViewModal(
-    task: TaskModalData,
+fun NoteViewModal(
+    note: NoteModalData,
     onDismiss: () -> Unit,
     navController: NavController
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
 
-    val safeColorHex = task.categoryColorHex ?: "#9D9D9D"
+    val safeColorHex = note.categoryColorHex ?: "#9D9D9D"
     val categoryColor = Color(safeColorHex.toColorInt())
 
     val context = LocalContext.current
-    val taskDao = AppDatabase.getInstance(context).taskDao()
-    val noteRepository = remember { NoteRepository(taskDao) }
-    val noteViewModel: NoteViewModel =
-        viewModel(factory = NoteViewModelFactory(noteRepository))
+    val noteDao = AppDatabase.getInstance(context).noteDao()
+    val noteRepository = remember { NoteRepository(noteDao) }
+    val noteViewModel: NoteViewModel = viewModel(factory = NoteViewModelFactory(noteRepository))
 
 
     Dialog(
@@ -140,13 +139,13 @@ fun TaskViewModal(
                                 .align(Alignment.CenterStart)
                         ) {
                             Text(
-                                text = task.categoryName ?: "Without Category",
+                                text = note.categoryName ?: "Without Category",
                                 color = categoryColor,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Medium,
                             )
                         }
-                        if (task.isPinned) {
+                        if (note.isPinned) {
                             Box(
                                 modifier = Modifier
                                     .background(
@@ -179,7 +178,7 @@ fun TaskViewModal(
                                 .align(Alignment.CenterEnd)
                         ) {
                             Text(
-                                text = task.createdAt.toFormattedDateString(),
+                                text = note.createdAt.toFormattedDateString(),
                                 color = MaterialTheme.colorScheme.tertiary,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Medium,
@@ -189,7 +188,7 @@ fun TaskViewModal(
 
                     // Título
                     Text(
-                        text = task.title,
+                        text = note.title,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black,
@@ -200,7 +199,7 @@ fun TaskViewModal(
 
                     // Description
                     Text(
-                        text = task.description ?: "",
+                        text = note.description ?: "",
                         fontSize = 14.sp,
                         color = Color.Gray,
                         lineHeight = 22.sp
@@ -208,7 +207,7 @@ fun TaskViewModal(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    if (task.date != null && task.time != null) {
+                    if (note.date != null && note.time != null) {
                         Text(
                             text = "Date & Time",
                             fontSize = 16.sp,
@@ -232,7 +231,7 @@ fun TaskViewModal(
                                     )
                                     .padding(16.dp)
                             ) {
-                                val dateInMillis = Formatters.dateInMillis(task.date)
+                                val dateInMillis = Formatters.dateInMillis(note.date)
                                 Text(
                                     text = dateInMillis.toFormattedDateString(),
                                     color = Color.Gray,
@@ -251,7 +250,7 @@ fun TaskViewModal(
                                     .padding(16.dp)
                             ) {
                                 Text(
-                                    text = Formatters.formattedTime(task.time.hour, task.time.minute),
+                                    text = Formatters.formattedTime(note.time.hour, note.time.minute),
                                     color = Color.Gray,
                                     fontSize = 14.sp
                                 )
@@ -284,7 +283,7 @@ fun TaskViewModal(
                         Button(
                             onClick = {
                                 onDismiss()
-                                navController.navigate("createNote?taskId=${task.id}")
+                                navController.navigate("createNote?noteId=${note.id}")
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -320,7 +319,7 @@ fun TaskViewModal(
                         showDeleteDialog = false
                         onDismiss()
 
-                        noteViewModel.deleteNote(task.id.toInt())
+                        noteViewModel.deleteNote(note.id.toInt())
                     },
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = Color.Red

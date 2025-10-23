@@ -34,7 +34,7 @@ import androidx.core.graphics.toColorInt
 import androidx.navigation.NavController
 
 @Composable
-fun TaskCard(props: TaskCardProps, navController: NavController) {
+fun NoteCard(props: NoteCardProp, navController: NavController) {
 
     val safeColorHex = props.categoryColorHex ?: "#9D9D9D"
     val categoryColor = Color(safeColorHex.toColorInt())
@@ -135,8 +135,8 @@ fun TaskCard(props: TaskCardProps, navController: NavController) {
         }
 
         if (showModal) {
-            TaskViewModal(
-                task = TaskModalData(
+            NoteViewModal(
+                note = NoteModalData(
                     id = props.id,
                     title = props.title,
                     description = props.description,

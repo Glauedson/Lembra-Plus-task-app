@@ -16,7 +16,7 @@ import com.progmobile.lembraplus.data.db.model.Note
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
-    abstract fun taskDao(): NoteDao
+    abstract fun noteDao(): NoteDao
 
     companion object {
         @Volatile

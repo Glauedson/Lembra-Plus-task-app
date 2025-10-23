@@ -33,8 +33,8 @@ import com.progmobile.lembraplus.ui.components.CategoryCard.CategoryCard
 import com.progmobile.lembraplus.ui.components.CategoryCard.CategoryCardProps
 import com.progmobile.lembraplus.ui.components.HeaderTitle.HeaderTitle
 import com.progmobile.lembraplus.ui.components.HeaderTitle.HeaderTitleProps
-import com.progmobile.lembraplus.ui.components.TaskCard
-import com.progmobile.lembraplus.ui.components.TaskCardProps
+import com.progmobile.lembraplus.ui.components.NoteCard
+import com.progmobile.lembraplus.ui.components.NoteCardProp
 import com.progmobile.lembraplus.ui.vms.CategoryViewModel
 import com.progmobile.lembraplus.ui.vms.CategoryViewModelFactory
 import com.progmobile.lembraplus.ui.vms.NoteViewModel
@@ -52,7 +52,7 @@ fun SeeAllScreen(
     
     val context = LocalContext.current
 
-    val taskDao = AppDatabase.getInstance(context).taskDao()
+    val taskDao = AppDatabase.getInstance(context).noteDao()
     val noteRepository = remember { NoteRepository(taskDao) }
     val noteViewModel: NoteViewModel =
         viewModel(factory = NoteViewModelFactory(noteRepository))
@@ -94,8 +94,8 @@ fun SeeAllScreen(
                 when (type) {
                     "favorites" -> {
                         tasksFixed.forEach { card ->
-                            TaskCard(
-                                TaskCardProps(
+                            NoteCard(
+                                NoteCardProp(
                                     id = card.note.id.toString(),
                                     title = card.note.title,
                                     description = card.note.description,
@@ -112,13 +112,13 @@ fun SeeAllScreen(
                     }
 
                     "categories" -> {
-                        categories.sortedByDescending { it.taskCount }.forEach { card ->
+                        categories.sortedByDescending { it.noteCount }.forEach { card ->
                             CategoryCard(
                                 CategoryCardProps(
                                     id = card.category.id,
                                     name = card.category.name,
                                     colorHex = card.category.colorHex,
-                                    quant = card.taskCount
+                                    quant = card.noteCount
                                 ),
                                 navController = navController,
                                 viewModel = categoryViewModel
@@ -128,8 +128,8 @@ fun SeeAllScreen(
 
                     "tasks" -> {
                         allTasks.forEach { card ->
-                            TaskCard(
-                                TaskCardProps(
+                            NoteCard(
+                                NoteCardProp(
                                     id = card.note.id.toString(),
                                     title = card.note.title,
                                     description = card.note.description,

@@ -3,7 +3,7 @@ package com.progmobile.lembraplus.ui.components
 import java.time.LocalDate
 import java.time.LocalTime
 
-data class TaskCardProps(
+data class NoteCardProp(
     val id: String,
     val title: String,
     val description: String?,

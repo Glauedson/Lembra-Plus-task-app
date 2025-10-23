@@ -2,7 +2,7 @@ package com.progmobile.lembraplus.ui.vms
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.progmobile.lembraplus.data.db.dao.CategoryWithTaskCount
+import com.progmobile.lembraplus.data.db.dao.CategoryWithNoteCount
 import com.progmobile.lembraplus.data.db.model.Category
 import com.progmobile.lembraplus.data.repository.CategoryRepository
 import com.progmobile.lembraplus.utils.ColorUtils.normalizeHex
@@ -12,8 +12,8 @@ import kotlinx.coroutines.launch
 
 class CategoryViewModel(private val repository: CategoryRepository) : ViewModel() {
 
-    private val _categories = MutableStateFlow<List<CategoryWithTaskCount>>(emptyList())
-    val categories: StateFlow<List<CategoryWithTaskCount>> = _categories
+    private val _categories = MutableStateFlow<List<CategoryWithNoteCount>>(emptyList())
+    val categories: StateFlow<List<CategoryWithNoteCount>> = _categories
 
     private val _category = MutableStateFlow<Category?>(null)
     val category: StateFlow<Category?> = _category
