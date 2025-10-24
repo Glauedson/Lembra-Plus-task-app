@@ -1,3 +1,14 @@
 <resources>
+
+    <!-- Global Strings / App -->
     <string name="app_name">LembraPlus</string>
+
+    <!-- About Screen -->
+    <string name="about_title">About</string>
+    <string name="about_description_1">Manage your tasks and notes with ease. With %1$s, you can write down, categorize, and schedule your reminders, ensuring your ideas and commitments are always organized.</string>
+    <string name="about_description_2">%1$s is an academic project developed for the Mobile Development discipline of the System Analysis and Development course at the Federal Institute of Ceará - Jaguaruana Campus (IFCE).</string>
+    <string name="created_by">Created by:</string>
+    <string name="creator_name_label">Name:</string>
+    <string name="creator_github_label" translatable="false">Github:</string>
+
 </resources>

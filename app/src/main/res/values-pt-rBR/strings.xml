@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LembraPlus</string>
+    <string name="about_title">Sobre</string>
+    <string name="about_description_1">Gerencie suas tarefas e anotações com facilidade. Com o %1$s, você pode anotar, categorizar e programar seus lembretes, garantindo que suas ideias e compromissos estejam sempre organizados.</string>
+    <string name="about_description_2">%1$s é um projeto acadêmico desenvolvido para a disciplina de Desenvolvimento Mobile do curso de Análise e Desenvolvimento de Sistema do Instituto Federal do Ceará - Campus Jaguaruana (IFCE).</string>
+    <string name="created_by">Criado por:</string>
+    <string name="creator_name_label">Nome:</string>
+</resources>

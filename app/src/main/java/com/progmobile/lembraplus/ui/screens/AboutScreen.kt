@@ -2,26 +2,26 @@ package com.progmobile.lembraplus.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -43,180 +43,202 @@ fun AboutScreen(navController: NavHostController) {
             NavBar(props = NavProps(navController, "about"))
         }
     ) { pad ->
-        Column(
+        Column (
             modifier = Modifier
                 .padding(pad)
                 .padding(start = 25.dp, end = 25.dp, top = 15.dp)
                 .fillMaxSize(),
-        ) {
+            verticalArrangement = Arrangement.spacedBy(15.dp)
+        ){
             HeaderTitle(
                 props = HeaderTitleProps(
-                    title = "About",
+                    title = stringResource(id = R.string.about_title),
                     backButton = {
                         navController.navigate(Routes.Home.route)
                     }
                 )
             )
-
-            Spacer(modifier = Modifier.height(25.dp))
-            Text(
-                text = buildAnnotatedString {
-                    append("Manage your tasks and notes with ease. With ")
-                    withStyle(
-                        style = SpanStyle(
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
-                        )
-                    ) {
-                        append("Lembra+")
-                    }
-                    append(", you can write down, categorize, and schedule your reminders, ensuring your ideas and commitments are always organized.")
-                }
-            )
-
-            Spacer(modifier = Modifier.height(25.dp))
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(
-                        style = SpanStyle(
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
-                        )
-                    ) {
-                        append("Lembra+")
-                    }
-                    append(" is an academic project developed for the Mobile Development course at the Federal Institute of Jaguaruana (IFCE).")
-                }
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                "Created by:",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Medium
-            )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp)
-                    .shadow(
-                        elevation = 2.dp,
-                        shape = RoundedCornerShape(12.dp),
-                    )
-                    .background(
-                        color = MaterialTheme.colorScheme.tertiary,
-                        shape = RoundedCornerShape(10.dp)
-                    ),
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(25.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .width(105.dp)
-                        .height(105.dp)
-                        .padding(10.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.profile_edson),
-                        contentDescription = "Profile",
-                        contentScale = ContentScale.Crop,
+                item {
+                    val annotatedString = buildAnnotatedString {
+
+                        val baseString = stringResource(id = R.string.about_description_1)
+                        val placeholder = "%1\$s"
+
+                        val startIndex = baseString.indexOf(placeholder)
+
+                        if (startIndex != -1) {
+                            append(baseString.substring(0, startIndex))
+                            withStyle(
+                                style = SpanStyle(
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            ) {
+                                append("Lembra+")
+                            }
+                            append(baseString.substring(startIndex + placeholder.length))
+                        } else {
+                            append(baseString)
+                        }
+
+                    }
+                    Text(text = annotatedString)
+                }
+                item {
+                    val annotatedString = buildAnnotatedString {
+
+                        val baseString = stringResource(id = R.string.about_description_2)
+                        val placeholder = "%1\$s"
+
+                        val startIndex = baseString.indexOf(placeholder)
+
+                        if (startIndex != -1) {
+                            append(baseString.substring(0, startIndex))
+                            withStyle(
+                                style = SpanStyle(
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            ) {
+                                append("Lembra+")
+                            }
+                            append(baseString.substring(startIndex + placeholder.length))
+                        } else {
+                            append(baseString)
+                        }
+
+                    }
+                    Text(text = annotatedString)
+                }
+                item {
+                    Column(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(10.dp))
-                    )
-                }
-
-                Column(
-                    modifier = Modifier
-                        .padding(start = 10.dp, end = 10.dp, top = 10.dp)
-                        .height(90.dp)
-                ) {
-                    Text(
-                        text = "Name:",
-                        fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Medium
-                    )
-
-                    Text(
-                        text = "Glauedson Carlos",
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.offset(y = (-7).dp)
-                    )
-                    Text(
-                        text = "Github:",
-                        fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.offset(y = (-7).dp)
-                    )
-                    Text(
-                        text = "Glauedson",
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.offset(y = (-12).dp)
-                    )
-                }
-            }
-
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp)
-                    .shadow(
-                        elevation = 2.dp,
-                        shape = RoundedCornerShape(12.dp),
-                    )
-                    .background(
-                        color = MaterialTheme.colorScheme.tertiary,
-                        shape = RoundedCornerShape(10.dp)
-                    ),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .width(105.dp)
-                        .height(105.dp)
-                        .padding(10.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.profile_gustavo),
-                        contentDescription = "Profile",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(10.dp))
-                    )
-                }
-
-                Column(
-                    modifier = Modifier
-                        .padding(start = 10.dp, end = 10.dp, top = 10.dp)
-                        .height(90.dp)
-                ) {
-                    Text(
-                        text = "Name:",
-                        fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Medium
-                    )
-
-                    Text(
-                        text = "Gustavo Sousa",
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.offset(y = (-7).dp)
-                    )
-                    Text(
-                        text = "Github:",
-                        fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.offset(y = (-7).dp)
-                    )
-                    Text(
-                        text = "Gustavo Sousa",
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.offset(y = (-12).dp)
-                    )
+                            .fillMaxWidth()
+                            .padding(bottom = 35.dp),
+                        verticalArrangement = Arrangement.spacedBy(15.dp)
+                    ) {
+                        Text(
+                            stringResource(id = R.string.created_by),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .shadow(
+                                    elevation = 2.dp,
+                                    shape = RoundedCornerShape(12.dp),
+                                )
+                                .background(
+                                    color = MaterialTheme.colorScheme.tertiary,
+                                    shape = RoundedCornerShape(10.dp)
+                                )
+                                .padding(10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.profile_edson),
+                                contentDescription = "Profile",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(90.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                            )
+                            Column(
+                                modifier = Modifier
+                                    .padding(start = 15.dp)
+                            ) {
+                                Column (
+                                    verticalArrangement = Arrangement.spacedBy((-7).dp)
+                                ){
+                                    Text(
+                                        text = stringResource(id = R.string.creator_name_label),
+                                        fontSize = 13.sp,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    Text(
+                                        text = "Glauedson Carlos",
+                                        fontWeight = FontWeight.Medium,
+                                    )
+                                }
+                                Column (
+                                    verticalArrangement = Arrangement.spacedBy((-7).dp)
+                                ){
+                                    Text(
+                                        text = stringResource(id = R.string.creator_github_label),
+                                        fontSize = 13.sp,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    Text(
+                                        text = "Glauedson",
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                            }
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .shadow(
+                                    elevation = 2.dp,
+                                    shape = RoundedCornerShape(12.dp),
+                                )
+                                .background(
+                                    color = MaterialTheme.colorScheme.tertiary,
+                                    shape = RoundedCornerShape(10.dp)
+                                )
+                                .padding(10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.profile_gustavo),
+                                contentDescription = "Profile",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(90.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                            )
+                            Column(
+                                modifier = Modifier
+                                    .padding(start = 15.dp)
+                            ) {
+                                Column (
+                                    verticalArrangement = Arrangement.spacedBy((-7).dp)
+                                ){
+                                    Text(
+                                        text = stringResource(id = R.string.creator_name_label),
+                                        fontSize = 13.sp,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    Text(
+                                        text = "Gustavo Sousa",
+                                        fontWeight = FontWeight.Medium,
+                                    )
+                                }
+                                Column (
+                                    verticalArrangement = Arrangement.spacedBy((-7).dp)
+                                ){
+                                    Text(
+                                        text = stringResource(id = R.string.creator_github_label),
+                                        fontSize = 13.sp,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    Text(
+                                        text = "GustavoDeltta",
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

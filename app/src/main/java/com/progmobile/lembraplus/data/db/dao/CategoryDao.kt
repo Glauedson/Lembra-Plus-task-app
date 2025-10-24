@@ -25,7 +25,7 @@ interface CategoryDao {
     @Query("DELETE FROM categories WHERE id = :id")
     suspend fun delete(id: Int)
 
-    @Query("SELECT c.*, (SELECT COUNT(*) FROM notes WHERE notes.category_id = c.id) as taskCount FROM categories c ORDER BY c.category_name COLLATE NOCASE")
+    @Query("SELECT c.*, (SELECT COUNT(*) FROM notes WHERE notes.category_id = c.id) as noteCount FROM categories c ORDER BY c.category_name COLLATE NOCASE")
     suspend fun getAllWithNoteCount(): List<CategoryWithNoteCount>
 
     @Query("SELECT * FROM categories WHERE id = :id LIMIT 1")
